@@ -23,7 +23,10 @@ CREATE TABLE notas_fiscais (
     numero_nf VARCHAR(50) NOT NULL UNIQUE,
     fornecedor_id INT,
     data_emissao DATE NOT NULL,
-    xml LONGTEXT NOT NULL,
+    xml LONGTEXT NOT NULL, 
+    -- Ver com o Murilo se LONGTEXT é melhor opção para o projeto,
+    -- Pois em grandes quantidades de dados, pode ser mais lento.
+    -- Tendo opção de dados em nuvem, pode ser uma opção mais otimizada.
     FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id)
 );
 
@@ -61,6 +64,4 @@ ADD COLUMN confirmado BOOLEAN DEFAULT FALSE;
 INSERT INTO agendamentos (fornecedor_id, loja_id, data_agendamento, data_entrega, nota_fiscal_id, confirmado)
 VALUES (1, 1, '2025-03-10 10:00:00', '2025-03-15', 1, FALSE),
        (2, 2, '2025-03-12 14:00:00', '2025-03-18', 2, TRUE);
-
-
 
