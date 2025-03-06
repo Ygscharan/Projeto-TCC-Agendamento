@@ -1,8 +1,7 @@
-// Arquivo principal do backend
-
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const fornecedorRoutes = require('./routes/fornecedores');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -11,10 +10,8 @@ const port = process.env.PORT || 3000;
 app.use(express.json()); // Para interpretar JSON
 app.use(cors()); // Habilita CORS
 
-// Rotas (serão criadas depois)
-app.get('/', (req, res) => {
-    res.send('API do Projeto TCC funcionando!');
-});
+// Rotas
+app.use('/api/fornecedores', fornecedorRoutes);
 
 // Iniciar o servidor
 app.listen(port, () => {
