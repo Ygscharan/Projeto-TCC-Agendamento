@@ -23,7 +23,7 @@ CREATE TABLE notas_fiscais (
     numero_nf VARCHAR(50) NOT NULL UNIQUE,
     fornecedor_id INT,
     data_emissao DATE NOT NULL,
-    xml LONGTEXT NOT NULL, 
+    xml_nf LONGTEXT NOT NULL, 
     -- Ver com o Murilo se LONGTEXT é melhor opção para o projeto,
     -- Pois em grandes quantidades de dados, pode ser mais lento.
     -- Tendo opção de dados em nuvem, pode ser uma opção mais otimizada.
@@ -65,3 +65,6 @@ INSERT INTO agendamentos (fornecedor_id, loja_id, data_agendamento, data_entrega
 VALUES (1, 1, '2025-03-10 10:00:00', '2025-03-15', 1, FALSE),
        (2, 2, '2025-03-12 14:00:00', '2025-03-18', 2, TRUE);
 
+DESCRIBE fornecedores;
+
+DESC notas_fiscais;

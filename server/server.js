@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const fornecedorRoutes = require('./routes/fornecedores');
+const notaFiscalRoutes = require('./routes/notasFiscais');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -12,6 +13,7 @@ app.use(cors()); // Habilita CORS
 
 // Rotas
 app.use('/api/fornecedores', fornecedorRoutes);
+app.use('/api/notas-fiscais', notaFiscalRoutes);
 
 // Iniciar o servidor
 app.listen(port, () => {
