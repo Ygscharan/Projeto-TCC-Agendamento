@@ -1,27 +1,38 @@
-const db = require('../config/db');
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../config/db');
+const Agendamento = require('../models/agendamento');
+const NotaFiscal = sequelize.define('NotaFiscal', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    numero_nf: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        unique: true
+    },
+    fornecedor_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'fornecedores', 
+            key: 'id'
+        }
+    },
+    data_emissao: {
+        type: DataTypes.DATEONLY,
+        allowNull: false
+    },
+    xml_nf: {
+        type: DataTypes.TEXT,  
+        allowNull: false
+    }
+}, {
+    tableName: 'notas_fiscais',
+    timestamps: false
+});
 
-// Função para listar todas as notas fiscais
-const getAllNotasFiscais = () => {
-    return new Promise((resolve, reject) => {
-        db.query('SELECT * FROM notas_fiscais', (err, results) => {
-            if (err) reject(err);
-            resolve(results);
-        });
-    });
-};
+NotaFiscal.hasMany(Agendamento, { foreignKey: 'nota_fiscal_id' });
 
-// Função para adicionar uma nova nota fiscal
-const createNotaFiscal = (notaFiscal) => {
-    return new Promise((resolve, reject) => {
-        db.query(
-            'INSERT INTO notas_fiscais (fornecedor_id, numero_nf, data_emissao, xml_nf) VALUES (?, ?, ?, ?)',
-            [notaFiscal.fornecedor_id, notaFiscal.numero_nf, notaFiscal.data_emissao, notaFiscal.xml_nf],
-            (err, results) => {
-                if (err) reject(err);
-                resolve(results);
-            }
-        );
-    });
-};
-
-module.exports = { getAllNotasFiscais, createNotaFiscal };
+module.exports = NotaFiscal;

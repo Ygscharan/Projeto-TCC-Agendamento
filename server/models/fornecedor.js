@@ -1,30 +1,35 @@
+const { DataTypes } = require('sequelize');
 const db = require('../config/db');
+const Agendamento = require('./agendamento');
 
-// função para listar os fornecedores
-const getAllFornecedores = () => {
-    return new Promise((resolve, reject) => {
-        db.query('SELECT * FROM fornecedores', (err, results) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            resolve(results);
-        });
-    });
-};
+const Fornecedor = db.define('fornecedores', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    nome: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    cnpj: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    endereco: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    telefone: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    timestamps: false
+});
 
-// função de adicionar um fornecedor
-const createFornecedor = (fornecedor) => {
-    return new Promise((resolve, reject) => {
-        db.query('INSERT INTO fornecedores SET ?', fornecedor, (err, results) => {
-            if (err) {
-                reject(err);
-                return;
-            }
-            resolve(results);
-        });
-    });
-};
+// Definindo a associação corretamente
 
-// Exportando as funções
-module.exports = { getAllFornecedores, createFornecedor };
+
+
+module.exports = Fornecedor;

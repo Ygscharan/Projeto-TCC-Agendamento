@@ -52,7 +52,7 @@ INSERT INTO lojas (nome, endereco, telefone)
  VALUES ('Parana Matriz 001', 'Rua Miguel Luiz Pereira, 1583', '35252001'),
         ('Parana Max 003', 'Av Irmãos Pereira , 1500', '35252003');
 
-INSERT INTO notas_fiscais (numero_nf, fornecedor_id, data_emissao, xml)
+INSERT INTO notas_fiscais (numero_nf, fornecedor_id, data_emissao, xml_nf)
 VALUES ('NF12345', 1, '2025-03-01', '<xml>...</xml>'),
        ('NF67890', 2, '2025-03-02', '<xml>...</xml>');
 
@@ -68,3 +68,15 @@ VALUES (1, 1, '2025-03-10 10:00:00', '2025-03-15', 1, FALSE),
 DESCRIBE fornecedores;
 
 DESC notas_fiscais;
+
+
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    tipo ENUM('FORNECEDOR', 'FUNCIONARIO') NOT NULL
+);
+
+SELECT * FROM agendamentos;
+

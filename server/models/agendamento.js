@@ -1,59 +1,55 @@
-const db = require('../config/db');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/db');
 
-// Função para listar todos os agendamentos
-const getAllAgendamentos = () => {
-    return new Promise((resolve, reject) => {
-        db.query('SELECT * FROM agendamentos', (err, results) => {
-            if (err) reject(err);
-            resolve(results);
-        });
-    });
+const Agendamento = sequelize.define('agendamentos', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    fornecedor_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'fornecedores',
+            key: 'id'
+        }
+    },
+    loja_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'lojas',
+            key: 'id'
+        }
+    },
+    nota_fiscal_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'notas_fiscais',
+            key: 'id'
+        }
+    },
+    data_agendamento: {
+        type: DataTypes.DATEONLY,
+        allowNull: false
+    },
+    status: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        defaultValue: 'pendente'
+    },
+    data_entrega: {
+        type: DataTypes.DATEONLY,
+        allowNull: true
+    },
+    timestamps: false
+});
+
+// Definir as associações corretamente
+Agendamento.associate = function(models) {
+    Agendamento.belongsTo(models.Loja, { foreignKey: 'loja_id', as: 'loja_associada_agendamento' });  // Alias único
 };
 
-// Função para adicionar um novo agendamento
-const createAgendamento = (agendamento) => {
-    return new Promise((resolve, reject) => {
-        db.query(
-            'INSERT INTO agendamentos (fornecedor_id, loja_id, data_agendamento, data_entrega, nota_fiscal_id, confirmado) VALUES (?, ?, ?, ?, ?, ?)',
-            [
-                agendamento.fornecedor_id,
-                agendamento.loja_id,
-                agendamento.data_agendamento,
-                agendamento.data_entrega,
-                agendamento.nota_fiscal_id,
-                agendamento.confirmado,
-            ],
-            (err, results) => {
-                if (err) reject(err);
-                resolve(results);
-            }
-        );
-    });
-};
-
-// Função para atualizar o status do agendamento
-// falta alterar o status de pendente para cancelado ou confirmado
-const updateAgendamentoStatus = (id, confirmado) => {
-    return new Promise((resolve, reject) => {
-        db.query(
-            'UPDATE agendamentos SET  confirmado = ? WHERE id = ?',
-            [confirmado, id],
-            (err, results) => {
-                if (err) reject(err);
-                resolve(results);
-            }
-        );
-    });
-};
-
-// Função para excluir um agendamento
-const deleteAgendamento = (id) => {
-    return new Promise((resolve, reject) => {
-        db.query('DELETE FROM agendamentos WHERE id = ?', [id], (err, results) => {
-            if (err) reject(err);
-            resolve(results);
-        });
-    });
-};
-
-module.exports = { getAllAgendamentos, createAgendamento, updateAgendamentoStatus, deleteAgendamento };
+module.exports = Agendamento;

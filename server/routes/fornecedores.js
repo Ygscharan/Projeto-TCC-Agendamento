@@ -1,11 +1,26 @@
 const express = require('express');
+const { getAllFornecedores, createFornecedor } = require('../controllers/fornecedorController');
 const router = express.Router();
-const fornecedorController = require('../controllers/fornecedorController');
 
-// Rota para obter todos os fornecedores
-router.get('/', fornecedorController.getFornecedores);
+// Rota para listar todos os fornecedores
+router.get('/', async (req, res) => {
+    try {
+        const fornecedores = await getAllFornecedores();
+        res.json(fornecedores);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao listar fornecedores', error });
+    }
+});
 
 // Rota para criar um novo fornecedor
-router.post('/', fornecedorController.addFornecedor);
+router.post('/', async (req, res) => {
+    try {
+        const fornecedor = req.body;
+        const novoFornecedor = await createFornecedor(fornecedor);
+        res.status(201).json(novoFornecedor);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao criar fornecedor', error });
+    }
+});
 
 module.exports = router;

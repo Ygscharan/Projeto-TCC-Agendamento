@@ -1,25 +1,25 @@
 const NotaFiscal = require('../models/notaFiscal');
 
-// Controlador para obter todas as notas fiscais
-const getNotasFiscais = async (req, res) => {
+// Função para listar todas as notas fiscais
+const getAllNotasFiscais = async () => {
     try {
-        const notasFiscais = await NotaFiscal.getAllNotasFiscais();
-        res.status(200).json(notasFiscais);
-    } catch (err) {
-        res.status(500).json({ message: 'Erro ao buscar notas fiscais', error: err });
+        const notasFiscais = await NotaFiscal.findAll();
+        return notasFiscais;
+    } catch (error) {
+        console.error('Erro ao listar notas fiscais:', error);
+        throw error;
     }
 };
 
-// Controlador para criar uma nova nota fiscal
-const addNotaFiscal = async (req, res) => {
-    const { fornecedor_id, numero_nf, data_emissao, xml_nf } = req.body;
+// Função para criar uma nova nota fiscal
+const createNotaFiscal = async (notaFiscalData) => {
     try {
-        const notaFiscal = { fornecedor_id, numero_nf, data_emissao, xml_nf};
-        const result = await NotaFiscal.createNotaFiscal(notaFiscal);
-        res.status(201).json({ message: 'Nota fiscal cadastrada com sucesso', result });
-    } catch (err) {
-        res.status(500).json({ message: 'Erro ao cadastrar nota fiscal', error: err });
+        const novaNotaFiscal = await NotaFiscal.create(notaFiscalData);
+        return novaNotaFiscal;
+    } catch (error) {
+        console.error('Erro ao criar nota fiscal:', error);
+        throw error;
     }
 };
 
-module.exports = { getNotasFiscais, addNotaFiscal };
+module.exports = { getAllNotasFiscais, createNotaFiscal };

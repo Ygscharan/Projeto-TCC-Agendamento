@@ -1,47 +1,56 @@
+const Fornecedor = require('../models/fornecedor'); 
 const Agendamento = require('../models/agendamento');
 
-// Controlador para obter todos os agendamentos
-const getAgendamentos = async (req, res) => {
+// listar agendamentos não esta funcionando
+const getAllAgendamentos = async (req, res) => {
     try {
-        const agendamentos = await Agendamento.getAllAgendamentos();
-        res.status(200).json(agendamentos);
-    } catch (err) {
-        res.status(500).json({ message: 'Erro ao buscar agendamentos', error: err });
+        const agendamentos = await Agendamento.findAll({
+            include: [{
+                model: Fornecedor,
+                as: 'fornecedor_associado', // Alias correto
+                attributes: ['nome', 'cnpj'],
+            }]
+        });
+        res.json(agendamentos);
+    } catch (error) {
+        console.error('Erro ao listar agendamentos:', error);
+        throw new Error('Erro ao listar agendamentos');
     }
 };
 
-// Controlador para criar um novo agendamento
-const addAgendamento = async (req, res) => {
+// Função para criar um novo agendamento
+const createAgendamento = async (agendamento) => {
     try {
-        const novoAgendamento = await Agendamento.createAgendamento(req.body);
-        res.status(201).json({ message: 'Agendamento criado com sucesso', id: novoAgendamento.insertId });
-    } catch (err) {
-        res.status(500).json({ message: 'Erro ao criar agendamento', error: err });
+        return await Agendamento.create(agendamento);
+    } catch (error) {
+        throw new Error('Erro ao criar agendamento');
+    }
+};
+// Atualizar agendamento por ID
+const updateAgendamento = async (id, dadosAtualizados) => {
+    try {
+        const agendamento = await Agendamento.findByPk(id);
+        if (!agendamento) {
+            throw new Error('Agendamento não encontrado');
+        }
+        await agendamento.update(dadosAtualizados);
+        return agendamento;
+    } catch (error) {
+        throw new Error('Erro ao atualizar agendamento');
     }
 };
 
-// Controlador para atualizar o status de um agendamento
-// falta alterar o status de pendente para cancelado ou confirmado
-const updateStatus = async (req, res) => {
+// Deletar agendamento por ID
+const deleteAgendamento = async (id) => {
     try {
-        const { id } = req.params;
-        const { confirmado } = req.body;
-        await Agendamento.updateAgendamentoStatus(id, confirmado);
-        res.status(200).json({ message: 'Status atualizado com sucesso' });
-    } catch (err) {
-        res.status(500).json({ message: 'Erro ao atualizar status', error: err });
+        const agendamento = await Agendamento.findByPk(id);
+        if (!agendamento) {
+            throw new Error('Agendamento não encontrado');
+        }
+        await agendamento.destroy();
+    } catch (error) {
+        throw new Error('Erro ao deletar agendamento');
     }
 };
 
-// Controlador para excluir um agendamento
-const deleteAgendamento = async (req, res) => {
-    try {
-        const { id } = req.params;
-        await Agendamento.deleteAgendamento(id);
-        res.status(200).json({ message: 'Agendamento excluído com sucesso' });
-    } catch (err) {
-        res.status(500).json({ message: 'Erro ao excluir agendamento', error: err });
-    }
-};
-
-module.exports = { getAgendamentos, addAgendamento, updateStatus, deleteAgendamento };
+module.exports = { getAllAgendamentos, createAgendamento, updateAgendamento, deleteAgendamento };
