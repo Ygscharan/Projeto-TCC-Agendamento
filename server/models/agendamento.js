@@ -1,5 +1,5 @@
+const sequelize = require('../config/db'); // Corrija aqui
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
 
 const Agendamento = sequelize.define('agendamentos', {
     id: {
@@ -43,13 +43,22 @@ const Agendamento = sequelize.define('agendamentos', {
     data_entrega: {
         type: DataTypes.DATEONLY,
         allowNull: true
-    },
+    }
+}, {
     timestamps: false
 });
 
 // Definir as associações corretamente
-Agendamento.associate = function(models) {
-    Agendamento.belongsTo(models.Loja, { foreignKey: 'loja_id', as: 'loja_associada_agendamento' });  // Alias único
+Agendamento.associate = (models) => {
+    Agendamento.belongsTo(models.Fornecedor, {
+        foreignKey: 'fornecedor_id',
+        as: 'fornecedor'
+    });
+  
+    Agendamento.belongsTo(models.Loja, {
+        foreignKey: 'loja_id',
+        as: 'loja'
+    });
 };
 
 module.exports = Agendamento;

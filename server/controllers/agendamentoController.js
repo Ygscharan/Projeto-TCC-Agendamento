@@ -1,21 +1,18 @@
-const Fornecedor = require('../models/fornecedor'); 
-const Agendamento = require('../models/agendamento');
+const { Agendamento, Fornecedor, Loja } = require('../models');
 
-// listar agendamentos não esta funcionando
 const getAllAgendamentos = async (req, res) => {
-    try {
-        const agendamentos = await Agendamento.findAll({
-            include: [{
-                model: Fornecedor,
-                as: 'fornecedor_associado', // Alias correto
-                attributes: ['nome', 'cnpj'],
-            }]
-        });
-        res.json(agendamentos);
-    } catch (error) {
-        console.error('Erro ao listar agendamentos:', error);
-        throw new Error('Erro ao listar agendamentos');
-    }
+  try {
+    const agendamentos = await Agendamento.findAll({
+      include: [
+        { model: Fornecedor, as: 'fornecedor' },
+        { model: Loja, as: 'loja' }
+      ]
+    });
+    res.json(agendamentos);
+  } catch (error) {
+    console.error("Erro ao listar agendamentos:", error);
+    res.status(500).json({ error: 'Erro ao listar agendamentos' });
+  }
 };
 
 // Função para criar um novo agendamento
