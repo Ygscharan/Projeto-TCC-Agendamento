@@ -23,7 +23,7 @@ CREATE TABLE notas_fiscais (
     numero_nf VARCHAR(50) NOT NULL UNIQUE,
     fornecedor_id INT,
     data_emissao DATE NOT NULL,
-    xml_nf LONGTEXT NOT NULL, 
+    xml_nf TEXT NOT NULL, 
     -- Ver com o Murilo se LONGTEXT é melhor opção para o projeto,
     -- Pois em grandes quantidades de dados, pode ser mais lento.
     -- Tendo opção de dados em nuvem, pode ser uma opção mais otimizada.
@@ -79,4 +79,6 @@ CREATE TABLE usuarios (
 );
 
 SELECT * FROM agendamentos;
+
+SELECT * FROM fornecedores;
 
