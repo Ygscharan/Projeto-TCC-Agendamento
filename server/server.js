@@ -15,7 +15,7 @@ const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json()); // Para interpretar JSON
-app.use(cors()); // Habilita CORS
+app.use(cors({ origin: '*' })); // Habilita CORS
 
 
 
@@ -23,7 +23,7 @@ app.use(cors()); // Habilita CORS
 app.use('/api/fornecedores', fornecedorRoutes);
 app.use('/api/notas-fiscais', notaFiscalRoutes);
 app.use('/api/agendamentos', agendamentoRoutes);
-app.use('/auth', authRoutes); // Define as rotas de autenticação
+app.use('/api/auth', authRoutes); // Define as rotas de autenticação
 app.use('/api/lojas', lojaRoutes);
 // Iniciar o servidor
 app.listen(port, () => {

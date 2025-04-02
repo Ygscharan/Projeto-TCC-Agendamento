@@ -46,6 +46,7 @@ exports.login = async (req, res) => {
 
         // Compara a senha
         const senhaValida = await bcrypt.compare(senha, usuario.senha);
+        console.log('Recebendo login:', req.body);
         if (!senhaValida) {
             return res.status(400).json({ error: 'Usuário ou senha inválidos' });
         }
