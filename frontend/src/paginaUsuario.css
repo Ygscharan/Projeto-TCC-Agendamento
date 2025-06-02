@@ -1,0 +1,92 @@
+.container {
+    background-color: #000; /* cor de fundo preto */
+    height: 100vh; /* altura da página */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .header {
+    background-color: #ff0000; /* cor secundária vermelho */
+    color: #fff; /* cor do texto branco */
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .titulo {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .secao-1, .-PIU-secao-2 {
+    background-color: #fff; /* cor de fundo branco */
+    padding: 20px;
+    margin: 20px;
+    border: 1px solid #ddd; /* borda cinza */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* sombra */
+  }
+  
+  .subtitulo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .texto {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  
+  .botao {
+    background-color: #ff0000; /* cor secundária vermelho */
+    color: #fff; /* cor do texto branco */
+    padding: 10px 20px;
+    border: none; /* sem borda */
+    border-radius: 5px; /* arredondamento */
+    cursor: pointer; /* cursor em forma de mão */
+  }
+  
+  .botao:hover {
+    background-color: #ff3333; /* cor de fundo vermelho mais claro */
+  }
+  .botao-horario {
+  margin: 8px;
+  padding: 10px 16px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.botao-horario.selecionado {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.botao-confirmar {
+  margin-top: 20px;
+  padding: 12px 20px;
+  font-size: 16px;
+  background-color: #28a745;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.botao-confirmar:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

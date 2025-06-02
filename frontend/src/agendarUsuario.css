@@ -1,0 +1,29 @@
+.agendamento-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .agendamento-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .rbc-event {
+    padding: 4px;
+    border-radius: 4px;
+    color: white;
+    border: none;
+  }
+  
+  .rbc-event.disponivel {
+    background-color: #28a745;
+  }
+  
+  .rbc-event.analise {
+    background-color: #007bff;
+  }
+  
+  .rbc-event.agendado {
+    background-color: #6c757d;
+  }
+  

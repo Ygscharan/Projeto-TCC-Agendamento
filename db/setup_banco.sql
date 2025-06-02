@@ -82,3 +82,7 @@ SELECT * FROM agendamentos;
 
 SELECT * FROM fornecedores;
 
+
+ALTER TABLE agendamentos
+ADD COLUMN data_hora_inicio DATETIME DEFAULT NULL,
+ADD COLUMN data_hora_fim DATETIME DEFAULT NULL;

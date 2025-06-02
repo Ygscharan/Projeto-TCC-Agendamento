@@ -4,7 +4,12 @@
   "description": "Projeto de agendamento de entregas",
   "main": "index.js",
   "scripts": {
-    "start": "node server/server.js",
+    "start:backend": "node server/server.js",
+    "start:frontend": "cd frontend && env PORT=3003 npm start",
+    "start": "concurrently --kill-others \"npm run start:backend\" \"npm run start:frontend\"",
+    "stop": "concurrently \"npm run stop:backend\" \"npm run stop:frontend\"",
+    "stop:backend": "taskkill /F /IM node.exe",
+    "stop:frontend": "taskkill /F /IM  react-scripts.js",
     "dev": "nodemon server/server.js",
     "server": "nodemon server/server.js"
   },
@@ -20,14 +25,22 @@
   },
   "homepage": "https://github.com/Ygscharan/Projeto-TCC-Agendamento#readme",
   "dependencies": {
+    "axios": "^1.9.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
+    "concurrently": "^9.1.2",
     "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.13.0",
+    "mysql2": "^3.14.0",
     "nodemon": "^3.1.9",
-    "sequelize": "^6.37.6"
+    "react-big-calendar": "^1.18.0",
+    "react-calendar": "^5.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.5.0",
+    "react-scripts": "^5.0.1",
+    "sequelize": "^6.37.7"
   }
 }

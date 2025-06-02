@@ -1,4 +1,4 @@
-const sequelize = require('../config/db'); // Corrija aqui
+const sequelize = require('../config/db');
 const { DataTypes } = require('sequelize');
 
 const Agendamento = sequelize.define('agendamentos', {
@@ -31,10 +31,25 @@ const Agendamento = sequelize.define('agendamentos', {
             key: 'id'
         }
     },
+
+    // Novo: início do agendamento com hora
+    data_hora_inicio: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+
+    // Novo: fim do agendamento com hora
+    data_hora_fim: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+
+    // Opcional: para exibir só a data no calendário
     data_agendamento: {
         type: DataTypes.DATEONLY,
         allowNull: false
     },
+
     status: {
         type: DataTypes.STRING(20),
         allowNull: false,
@@ -48,13 +63,13 @@ const Agendamento = sequelize.define('agendamentos', {
     timestamps: false
 });
 
-// Definir as associações corretamente
+// Associações
 Agendamento.associate = (models) => {
     Agendamento.belongsTo(models.Fornecedor, {
         foreignKey: 'fornecedor_id',
         as: 'fornecedor'
     });
-  
+
     Agendamento.belongsTo(models.Loja, {
         foreignKey: 'loja_id',
         as: 'loja'
