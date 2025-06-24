@@ -16,13 +16,26 @@ const getAllAgendamentos = async (req, res) => {
   }
 };
 
-// Criar um novo agendamento
+// Criar um novo agendamento com verificação de conflito
 const createAgendamento = async (agendamento) => {
   try {
+    // Verificar se já existe um agendamento no mesmo dia e horário
+    const conflito = await Agendamento.findOne({
+      where: {
+        data_agendamento: agendamento.data_agendamento,
+        data_hora_inicio: agendamento.data_hora_inicio,
+      },
+    });
+
+    if (conflito) {
+      throw new Error('Horário já agendado');
+    }
+
+    // Criar agendamento se não houver conflito
     return await Agendamento.create(agendamento);
   } catch (error) {
-    console.error('Erro ao criar agendamento:', error); // Mostrar erro real
-    throw error; // Reenviar o erro real para o caller (rota, por exemplo)
+    console.error('Erro ao criar agendamento:', error);
+    throw error;
   }
 };
 

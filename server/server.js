@@ -1,5 +1,12 @@
+const fs = require('fs');
+const uploadDir = 'uploads';
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
 const express = require('express');
 const cors = require('cors');
+const multer = require('multer');
 require('dotenv').config();
 
 const fornecedorRoutes = require('./routes/fornecedores');
@@ -8,12 +15,14 @@ const agendamentoRoutes = require('./routes/agendamentos');
 const authRoutes = require('./routes/authRoutes');
 const lojaRoutes = require('./routes/lojas');
 
+
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware
-app.use(express.json()); // Para interpretar JSON
-app.use(cors({ origin: '*' })); // Habilita CORS
+app.use(express.json());
+app.use(cors({ origin: '*' }));
+
+app.use('/uploads', express.static('uploads'));
 
 // Rotas da API
 app.use('/api/fornecedores', fornecedorRoutes);
@@ -22,7 +31,7 @@ app.use('/api/agendamentos', agendamentoRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/lojas', lojaRoutes);
 
-// Rota principal
+
 app.get('/', (req, res) => {
   res.send(`
     <h1>API de Agendamento</h1>
@@ -33,16 +42,15 @@ app.get('/', (req, res) => {
       <li><a href="/api/agendamentos">Agendamentos</a></li>
       <li><a href="/api/auth">Autenticação</a></li>
       <li><a href="/api/lojas">Lojas</a></li>
+      <li><a href="/api/usuarios">Usuários</a></li>
     </ul>
   `);
 });
 
-// Middleware para rotas não definidas (404)
 app.use((req, res) => {
   res.status(404).send('Página não encontrada!');
 });
 
-// Iniciar o servidor
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
 });

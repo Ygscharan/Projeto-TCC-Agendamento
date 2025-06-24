@@ -6,6 +6,7 @@ import PaginaInicialFornecedor from './pages/paginaInicial-fornecedor';
 import PaginaInicialUsuario from './pages/paginaInicial-usuario';
 import AgendarUsuario from './pages/agendarUsuario';
 import AgendarUsuario2 from './pages/agendarUsuario2';
+import GerenciarPedidos from './pages/gerenciarPedidos';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/adicionar-usuario" element={<AdicionarUsuario />} />
         <Route path="/agendar-usuario" element={<AgendarUsuario />} />
         <Route path="/agendar-usuario2" element={<AgendarUsuario2 />} />
+        <Route path="/gerenciar-pedidos" element={<GerenciarPedidos />} />
       </Routes>
     </BrowserRouter>
   );

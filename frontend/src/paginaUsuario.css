@@ -1,19 +1,4 @@
-.container {
-    background-color: #000; /* cor de fundo preto */
-    height: 100vh; /* altura da página */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .header {
-    background-color: #ff0000; /* cor secundária vermelho */
-    color: #fff; /* cor do texto branco */
-    padding: 20px;
-    text-align: center;
-  }
-  
+
   .titulo {
     font-size: 36px;
     font-weight: bold;
@@ -47,18 +32,9 @@
     margin-bottom: 20px;
   }
   
-  .botao {
-    background-color: #ff0000; /* cor secundária vermelho */
-    color: #fff; /* cor do texto branco */
-    padding: 10px 20px;
-    border: none; /* sem borda */
-    border-radius: 5px; /* arredondamento */
-    cursor: pointer; /* cursor em forma de mão */
-  }
+
   
-  .botao:hover {
-    background-color: #ff3333; /* cor de fundo vermelho mais claro */
-  }
+
   .botao-horario {
   margin: 8px;
   padding: 10px 16px;
@@ -89,4 +65,22 @@
 .botao-confirmar:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+/* Estilo base para eventos do calendário */
+.rbc-event {
+  transition: opacity 0.3s ease;
+}
+
+/* Evento do tipo 'disponível' inicialmente invisível */
+.event-disponivel {
+  opacity: 0;
+}
+
+/* Fica visível quando passa o mouse */
+.event-disponivel.hovered {
+  opacity: 1;
+}
+.rbc-event:hover {
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.2s ease;
 }

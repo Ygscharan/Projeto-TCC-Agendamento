@@ -58,7 +58,12 @@ const Agendamento = sequelize.define('agendamentos', {
     data_entrega: {
         type: DataTypes.DATEONLY,
         allowNull: true
-    }
+    },
+    arquivo_xml: {
+  type: DataTypes.STRING,
+  allowNull: true // Pode ser nulo se o usuário ainda não subiu o arquivo
+}
+
 }, {
     timestamps: false
 });

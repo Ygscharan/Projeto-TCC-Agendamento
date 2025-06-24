@@ -86,3 +86,10 @@ SELECT * FROM fornecedores;
 ALTER TABLE agendamentos
 ADD COLUMN data_hora_inicio DATETIME DEFAULT NULL,
 ADD COLUMN data_hora_fim DATETIME DEFAULT NULL;
+
+
+SELECT * FROM usuarios
+
+DELETE FROM agendamentos;
+
+ALTER TABLE agendamentos ADD COLUMN arquivo_xml VARCHAR(255);

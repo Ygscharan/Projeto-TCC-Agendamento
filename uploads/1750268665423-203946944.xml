@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NotaFiscal>
+  <Emitente>
+    <CNPJ>12345678000195</CNPJ>
+    <RazaoSocial>Fornecedor Exemplo LTDA</RazaoSocial>
+  </Emitente>
+  <Destinatario>
+    <CNPJ>98765432000160</CNPJ>
+    <RazaoSocial>Loja de Testes SA</RazaoSocial>
+  </Destinatario>
+  <Produtos>
+    <Produto>
+      <Codigo>001</Codigo>
+      <Descricao>Produto A</Descricao>
+      <Quantidade>10</Quantidade>
+      <ValorUnitario>25.00</ValorUnitario>
+    </Produto>
+    <Produto>
+      <Codigo>002</Codigo>
+      <Descricao>Produto B</Descricao>
+      <Quantidade>5</Quantidade>
+      <ValorUnitario>50.00</ValorUnitario>
+    </Produto>
+  </Produtos>
+  <Total>
+    <ValorTotal>375.00</ValorTotal>
+  </Total>
+  <DataEmissao>2025-06-04</DataEmissao>
+</NotaFiscal>

@@ -1,0 +1,55 @@
+.container-gerenciar {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.card-agendamento {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.card-agendamento p {
+  margin: 5px 0;
+}
+
+.card-agendamento a {
+  color: blue;
+  text-decoration: underline;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.botoes {
+  display: flex;
+  gap: 10px;
+}
+
+.botao-confirmar {
+  padding: 8px 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.botao-confirmar:hover {
+  background-color: #45a049;
+}
+
+.botao-cancelar {
+  padding: 8px 12px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.botao-cancelar:hover {
+  background-color: #e53935;
+}

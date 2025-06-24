@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../agendarUsuario2.css';
 
-// Horários permitidos fixos
 const horariosPermitidos = [
   '08:00', '09:00', '10:00', '11:00',
   '13:00', '14:00', '15:00', '16:00', '17:00'
@@ -14,64 +13,74 @@ const AgendarUsuario2 = () => {
   const navigate = useNavigate();
   const dataSelecionada = location.state?.data;
 
-  const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
+  const [horariosOcupados, setHorariosOcupados] = useState([]);
   const [horarioSelecionado, setHorarioSelecionado] = useState(null);
-  const [carregando, setCarregando] = useState(true);
+  const [arquivoXML, setArquivoXML] = useState(null);
 
   useEffect(() => {
-    if (!dataSelecionada) return;
-
     async function buscarHorarios() {
+      if (!dataSelecionada) return;
+
       try {
         const response = await axios.get('http://localhost:3000/api/agendamentos');
-
         const agendamentosDoDia = response.data.filter(
-          ag => new Date(ag.data_hora_inicio).toISOString().slice(0, 10) === dataSelecionada
+          ag => ag.data_agendamento === dataSelecionada
         );
 
-        const horariosOcupados = agendamentosDoDia.map(ag => {
-          const hora = new Date(ag.data_hora_inicio).toTimeString().slice(0, 5); // ex: "08:00"
-          return hora;
+        const ocupados = agendamentosDoDia.map((ag) => {
+          const data = new Date(ag.data_hora_inicio);
+          const hora = data.getUTCHours().toString().padStart(2, '0');
+          const minuto = data.getUTCMinutes().toString().padStart(2, '0');
+          return `${hora}:${minuto}`;
         });
 
-        const horariosLivres = horariosPermitidos.filter(
-          hora => !horariosOcupados.includes(hora)
-        );
-
-        setHorariosDisponiveis(horariosLivres);
+        setHorariosOcupados(ocupados);
       } catch (error) {
         console.error('Erro ao buscar agendamentos:', error);
-      } finally {
-        setCarregando(false);
       }
     }
 
     buscarHorarios();
   }, [dataSelecionada]);
 
+  const handleArquivoChange = (e) => {
+    setArquivoXML(e.target.files[0]);
+  };
+
   const handleAgendar = async () => {
     if (!horarioSelecionado) return alert('Selecione um horário');
+    if (!arquivoXML) return alert('Selecione um arquivo XML');
 
-    const dataHoraInicio = `${dataSelecionada}T${horarioSelecionado}:00`;
-    const dataHoraFim = new Date(`${dataHoraInicio}`);
-    dataHoraFim.setHours(dataHoraFim.getHours() + 1);
+    // Cria um objeto Date no horário local e depois converte para UTC
+    const [hora, minuto] = horarioSelecionado.split(':');
+    const dataHora = new Date(`${dataSelecionada}T${hora}:${minuto}:00`);
+    const dataHoraInicio = new Date(dataHora.getTime() - dataHora.getTimezoneOffset() * 60000); // Corrige timezone
+    const dataHoraFim = new Date(dataHoraInicio.getTime() + 59 * 60 * 1000 + 59000); // +59min59s
+
+    const formData = new FormData();
+    formData.append('fornecedor_id', 1);
+    formData.append('loja_id', 1);
+    formData.append('nota_fiscal_id', 1);
+    formData.append('data_agendamento', dataSelecionada);
+    formData.append('data_hora_inicio', dataHoraInicio.toISOString());
+    formData.append('data_hora_fim', dataHoraFim.toISOString());
+    formData.append('status', 'pendente');
+    formData.append('xml', arquivoXML);
 
     try {
-      await axios.post('http://localhost:3000/api/agendamentos', {
-        fornecedor_id: 1, // Ajustar conforme necessário
-        loja_id: 1,       // Ajustar conforme necessário
-        nota_fiscal_id: 1, // Ajustar conforme necessário
-        data_agendamento: dataSelecionada,
-        data_hora_inicio: dataHoraInicio,
-        data_hora_fim: dataHoraFim,
-        status: 'pendente'
+      await axios.post('http://localhost:3000/api/agendamentos/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
 
       alert('Agendamento realizado com sucesso!');
       navigate('/');
     } catch (error) {
       console.error('Erro ao agendar:', error);
-      alert('Erro ao realizar agendamento.');
+      if (error.response?.status === 409) {
+        alert('Este horário já está ocupado. Selecione outro.');
+      } else {
+        alert('Erro ao realizar agendamento.');
+      }
     }
   };
 
@@ -79,26 +88,23 @@ const AgendarUsuario2 = () => {
     <div className="agendamento-container">
       <h2>Agendar para o dia {dataSelecionada}</h2>
 
-      {carregando ? (
-        <p>Carregando horários...</p>
-      ) : (
-        <div className="horarios-disponiveis">
-          {horariosDisponiveis.length > 0 ? (
-            horariosDisponiveis.map((horario) => (
-              <button
-                key={horario}
-                className={`botao-horario ${horarioSelecionado === horario ? 'selecionado' : ''}`}
-                onClick={() => setHorarioSelecionado(horario)}
-              >
-                {horario}
-              </button>
-            ))
-          ) : (
-            <p>Não há horários disponíveis para esta data.</p>
-          )}
-        </div>
-      )}
+      <div className="horarios-disponiveis">
+        {horariosPermitidos.map((horario) => {
+          const ocupado = horariosOcupados.includes(horario);
+          return (
+            <button
+              key={horario}
+              className={`botao-horario ${ocupado ? 'ocupado' : ''} ${horarioSelecionado === horario ? 'selecionado' : ''}`}
+              onClick={() => !ocupado && setHorarioSelecionado(horario)}
+              disabled={ocupado}
+            >
+              {horario}
+            </button>
+          );
+        })}
+      </div>
 
+      <input type="file" accept=".xml" onChange={handleArquivoChange} />
       <button
         className="botao-confirmar"
         onClick={handleAgendar}

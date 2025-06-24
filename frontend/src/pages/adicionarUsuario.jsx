@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import bcrypt from 'bcryptjs';
+import { Link } from 'react-router-dom';
+import '../adicionarUsuario.css';
 
 function AdicionarUsuario() {
   const [nome, setNome] = useState('');
@@ -18,11 +20,11 @@ function AdicionarUsuario() {
     }
 
     try {
-      const senhaCriptografada = await bcrypt.hash(senha, 10);
-      const response = await axios.post('http://localhost:3000/api/usuarios', {
+      
+      const response = await axios.post('http://localhost:3000/api/auth/register', {
         nome,
         email,
-        senha: senhaCriptografada,
+        senha,
         tipo,
       });
       console.log(response.data);
@@ -38,32 +40,38 @@ function AdicionarUsuario() {
   };
 
   return (
-    <div>
-      <h1>Cadastrar Usuário</h1>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
-      <form onSubmit={handleSubmit}>
-        <label>
-          Nome:
-          <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} />
-        </label>
-        <label>
-          E-mail:
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        </label>
-        <label>
-          Senha:
-          <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
-        </label>
-        <label>
-          Tipo:
-          <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
-            <option value="">Selecione o tipo de usuário</option>
-            <option value="FUNCIONARIO">Funcionário</option>
-            <option value="FORNECEDOR">Fornecedor</option>
-          </select>
-        </label>
-        <button type="submit">Cadastrar</button>
-      </form>
+    <div className="container">
+      <header className="header">
+        <h1 className="titulo">Adicionar Usuário</h1>
+      </header>
+      <main className="main">
+        <section className="secao-1">
+          <form onSubmit={handleSubmit}>
+            <div className="campo">
+              <label>Nome:</label>
+              <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} />
+            </div>
+            <div className="campo">
+              <label>E-mail:</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <div className="campo">
+              <label>Senha:</label>
+              <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
+            </div>
+            <div className="campo">
+              <label>Tipo:</label>
+              <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
+                <option value="">Selecione o tipo de usuário</option>
+                <option value="FUNCIONARIO">Funcionário</option>
+                <option value="FORNECEDOR">Fornecedor</option>
+              </select>
+            </div>
+            <button type="submit" className="botao">Cadastrar</button>
+            {error && <div className="error">{error}</div>}
+          </form>
+        </section>
+      </main>
     </div>
   );
 }
