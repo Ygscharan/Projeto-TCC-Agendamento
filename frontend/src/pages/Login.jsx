@@ -9,49 +9,46 @@ function Login() {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setError('');
 
-    console.log('Enviando login:', { email, senha });
+  try {
+    const response = await axios.post('http://localhost:3000/api/auth/login', {
+      email,
+      senha,
+    });
 
-    try {
-      const response = await axios.post('http://localhost:3000/api/auth/login', {
-        email,
-        senha,
-      });
+    const { token, tipo, nome, fornecedor } = response.data;
 
-      console.log('Resposta do backend:', response.data);
+    // Armazenar os dados no localStorage
+    localStorage.setItem('token', token);
+    localStorage.setItem('nome', nome);
+    localStorage.setItem('tipo', tipo);
 
-      // Armazenando o token no localStorage
-      localStorage.setItem('token', response.data.token);
-
-      // Direcionando para a tela paginaInicial-usuario.jsx
-      navigate('/pagina-inicial-usuario');
-    } catch (err) {
-      console.error('Erro na requisição:', err.response?.data || err.message);
-      if (err.response?.data?.error) {
-        setError(err.response.data.error);
-      } else if (err.response?.status === 401) {
-        const usuarioExiste = await axios.get(`http://localhost:3000/api/usuarios/${email}`);
-        if (usuarioExiste.data) {
-          if (usuarioExiste.data.senha !== senha) {
-            setError('Senha incorreta');
-            setShowForgotPassword(true); // Ativa o estado showForgotPassword
-          } else {
-            setError('E-mail ou senha inválidos');
-          }
-        } else {
-          setError('Usuário não encontrado');
-        }
-      } else {
-        setError('Erro desconhecido');
-      }
-      if (error === 'Senha incorreta') {
-        setShowForgotPassword(true); // Ativa o estado showForgotPassword
-      }
+    if (fornecedor) {
+      localStorage.setItem('fornecedor_id', fornecedor.id);    // <-- usa fornecedor.id
+      localStorage.setItem('fornecedor_nome', fornecedor.nome); // <-- usa fornecedor.nome
     }
-  };
 
+    // Redirecionar conforme o tipo
+    if (tipo === 'FORNECEDOR') {
+      navigate('/pagina-inicial-fornecedor');
+    } else {
+      navigate('/pagina-inicial-usuario');
+    }
+  } catch (err) {
+    console.error('Erro no login:', err);
+    if (err.response?.data?.error) {
+      setError(err.response.data.error);
+      if (err.response.data.error === 'Senha incorreta') {
+        setShowForgotPassword(true);
+      }
+    } else {
+      setError('Erro ao realizar login');
+    }
+  }
+};
   return (
     <div className="container">
       <div className="login-form">
@@ -73,15 +70,11 @@ function Login() {
             required
           />
           <button type="submit">Entrar</button>
-          <button onClick={() => navigate('/adicionar-usuario')}>Adicionar Usuário</button>
+          <button type="button" onClick={() => navigate('/adicionar-usuario')}>Adicionar Usuário</button>
           {showForgotPassword && (
-            <button onClick={() => navigate('/recuperar-senha')}>Esqueci minha senha</button>
+            <button type="button" onClick={() => navigate('/recuperar-senha')}>Esqueci minha senha</button>
           )}
         </form>
-        <div className="botao-externo">
-          <button onClick={() => navigate('/pagina-inicial-fornecedor')}>Acesso Fornecedor</button>
-          <button onClick={() => navigate('/pagina-inicial-usuario')}>Acesso Usuário</button>
-        </div>
       </div>
     </div>
   );

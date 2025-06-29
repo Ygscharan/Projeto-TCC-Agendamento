@@ -1,8 +1,10 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+
 const {
   getAllAgendamentos,
+  getAgendamentosPorFornecedor, // ✅ Adicionado
   createAgendamento,
   updateAgendamento,
   deleteAgendamento
@@ -34,6 +36,9 @@ const upload = multer({
   }
 });
 
+// ✅ Nova rota para buscar agendamentos por nome do fornecedor
+router.get('/fornecedor/:nomeFornecedor', getAgendamentosPorFornecedor);
+
 // Rota para listar todos os agendamentos
 router.get('/', getAllAgendamentos);
 
@@ -42,23 +47,19 @@ router.post('/upload', upload.single('xml'), async (req, res) => {
   try {
     const agendamento = req.body;
 
-    // Verifica se data_hora_inicio foi enviada
     if (!agendamento.data_hora_inicio || !agendamento.data_agendamento) {
       return res.status(400).json({ message: 'Campos de data são obrigatórios.' });
     }
 
-    // Converte e valida data_hora_inicio
     const dataInicio = new Date(agendamento.data_hora_inicio);
     if (isNaN(dataInicio.getTime())) {
       return res.status(400).json({ message: 'data_hora_inicio inválida.' });
     }
 
-    // Remove segundos/milissegundos e converte para ISO
     dataInicio.setSeconds(0);
     dataInicio.setMilliseconds(0);
     agendamento.data_hora_inicio = dataInicio.toISOString();
 
-    // Verifica conflito no banco
     const conflito = await Agendamento.findOne({
       where: {
         data_agendamento: agendamento.data_agendamento,
@@ -70,12 +71,10 @@ router.post('/upload', upload.single('xml'), async (req, res) => {
       return res.status(409).json({ message: 'Já existe um agendamento neste horário.' });
     }
 
-    // Se tiver arquivo, salva o nome
     if (req.file) {
       agendamento.arquivo_xml = req.file.filename;
     }
 
-    // Cria o agendamento
     const novoAgendamento = await createAgendamento(agendamento);
     res.status(201).json(novoAgendamento);
 

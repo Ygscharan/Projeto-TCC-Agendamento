@@ -7,6 +7,9 @@ import PaginaInicialUsuario from './pages/paginaInicial-usuario';
 import AgendarUsuario from './pages/agendarUsuario';
 import AgendarUsuario2 from './pages/agendarUsuario2';
 import GerenciarPedidos from './pages/gerenciarPedidos';
+import CadastrarEmpresa from './pages/cadastrarEmpresa';
+import MeusAgendamentos from './pages/meusAgendamentos';
+import AdicionarLoja from './pages/adicionarLoja';
 
 function App() {
   return (
@@ -20,6 +23,9 @@ function App() {
         <Route path="/agendar-usuario" element={<AgendarUsuario />} />
         <Route path="/agendar-usuario2" element={<AgendarUsuario2 />} />
         <Route path="/gerenciar-pedidos" element={<GerenciarPedidos />} />
+        <Route path="/cadastrar-empresa" element={<CadastrarEmpresa />} />
+        <Route path="/meus-agendamentos" element={<MeusAgendamentos />} />
+        <Route path="/adicionar-loja" element={<AdicionarLoja />} />
       </Routes>
     </BrowserRouter>
   );

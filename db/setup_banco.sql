@@ -93,3 +93,7 @@ SELECT * FROM usuarios
 DELETE FROM agendamentos;
 
 ALTER TABLE agendamentos ADD COLUMN arquivo_xml VARCHAR(255);
+
+DELETE FROM usuarios
+
+DESCRIBE usuarios;

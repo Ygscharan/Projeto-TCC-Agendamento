@@ -72,7 +72,7 @@ const Agendamento = sequelize.define('agendamentos', {
 Agendamento.associate = (models) => {
     Agendamento.belongsTo(models.Fornecedor, {
         foreignKey: 'fornecedor_id',
-        as: 'fornecedor'
+        as: 'fornecedorAgendamento'
     });
 
     Agendamento.belongsTo(models.Loja, {

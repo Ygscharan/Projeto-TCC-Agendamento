@@ -1,32 +1,32 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Usuario = require('../models/Usuario');
+const Fornecedor = require('../models/fornecedor');
 
-// Chave secreta para assinar o token
 const SECRET_KEY = 'seu_segredo_super_secreto';
 
 // Registrar usuário
 exports.register = async (req, res) => {
   try {
-    const { nome, email, senha, tipo } = req.body;
+    const { nome, email, senha, tipo, fornecedor_id } = req.body;
+
     if (typeof nome !== 'string') {
       return res.status(400).json({ error: 'Nome deve ser uma string' });
     }
-    // Verifica se o e-mail já existe
+
     const usuarioExistente = await Usuario.findOne({ where: { email } });
     if (usuarioExistente) {
       return res.status(400).json({ error: 'E-mail já cadastrado' });
     }
 
-    // Criptografa a senha
     const hashedPassword = await bcrypt.hash(senha, 10);
 
-    // Cria o usuário
     const usuario = await Usuario.create({
       nome,
       email,
-      senha: hashedPassword, // Salva a senha criptografada no banco de dados
-      tipo
+      senha: hashedPassword,
+      tipo,
+      fornecedor_id: tipo === 'FORNECEDOR' ? fornecedor_id : null
     });
 
     res.status(201).json({ message: 'Usuário cadastrado com sucesso!' });
@@ -41,23 +41,33 @@ exports.login = async (req, res) => {
   try {
     const { email, senha } = req.body;
 
-    // Busca o usuário no banco
-    const usuario = await Usuario.findOne({ where: { email } });
+    // Busca o usuário com o fornecedor associado (se existir)
+    const usuario = await Usuario.findOne({
+      where: { email },
+      include: [{ model: Fornecedor, as: 'fornecedorUsuario' }]
+    });
+
     if (!usuario) {
       return res.status(400).json({ error: 'Usuário ou senha inválidos' });
     }
 
-    // Compara a senha
     const senhaValida = await bcrypt.compare(senha, usuario.senha);
-    console.log('Recebendo login:', req.body);
     if (!senhaValida) {
       return res.status(400).json({ error: 'Usuário ou senha inválidos' });
     }
 
-    // Gera um token JWT
     const token = jwt.sign({ id: usuario.id, tipo: usuario.tipo }, SECRET_KEY, { expiresIn: '2h' });
 
-    res.json({ message: 'Login realizado com sucesso!', token });
+    // Envia os dados necessários para o frontend
+    res.json({
+  message: 'Login realizado com sucesso!',
+  token,
+  nome: usuario.nome,
+  tipo: usuario.tipo,
+  fornecedor: usuario.fornecedorUsuario
+    ? { id: usuario.fornecedorUsuario.id, nome: usuario.fornecedorUsuario.nome }
+    : null
+});
   } catch (error) {
     console.error('Erro ao realizar login:', error);
     res.status(500).json({ error: 'Erro ao realizar login' });

@@ -5,7 +5,7 @@ const getAllAgendamentos = async (req, res) => {
   try {
     const agendamentos = await Agendamento.findAll({
       include: [
-        { model: Fornecedor, as: 'fornecedor' },
+        { model: Fornecedor, as: 'fornecedorAgendamento' },
         { model: Loja, as: 'loja' }
       ]
     });
@@ -15,7 +15,32 @@ const getAllAgendamentos = async (req, res) => {
     res.status(500).json({ error: 'Erro ao listar agendamentos' });
   }
 };
+// Buscar agendamentos de um fornecedor específico pelo nome
+const getAgendamentosPorFornecedor = async (req, res) => {
+  const { nomeFornecedor } = req.params;
 
+  try {
+    const fornecedor = await Fornecedor.findOne({ where: { nome: nomeFornecedor } });
+
+    if (!fornecedor) {
+      return res.status(404).json({ error: 'Fornecedor não encontrado' });
+    }
+
+    const agendamentos = await Agendamento.findAll({
+      where: { fornecedor_id: fornecedor.id },
+      include: [
+        { model: Fornecedor, as: 'fornecedorAgendamento' }, // <- alias atualizado
+        { model: Loja, as: 'loja' }
+      ],
+      order: [['data_agendamento', 'ASC'], ['data_hora_inicio', 'ASC']]
+    });
+
+    res.json(agendamentos);
+  } catch (error) {
+    console.error('Erro ao buscar agendamentos por fornecedor:', error);
+    res.status(500).json({ error: 'Erro ao buscar agendamentos por fornecedor' });
+  }
+};
 // Criar um novo agendamento com verificação de conflito
 const createAgendamento = async (agendamento) => {
   try {
@@ -70,6 +95,7 @@ const deleteAgendamento = async (id) => {
 
 module.exports = {
   getAllAgendamentos,
+  getAgendamentosPorFornecedor,
   createAgendamento,
   updateAgendamento,
   deleteAgendamento

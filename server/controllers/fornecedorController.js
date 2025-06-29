@@ -1,24 +1,43 @@
 const Fornecedor = require('../models/fornecedor');
 
-// função para listar todos os fornecedores
+// Função para listar todos os fornecedores
 const getAllFornecedores = async () => {
-    try {
-        // Retorna todos os fornecedores utilizando Sequelize
-        const fornecedores = await Fornecedor.findAll();
-        return fornecedores;  // Retornando os dados corretamente
-    } catch (error) {
-        throw error;  // Lançando erro se houver falha
-    }
+  try {
+    const fornecedores = await Fornecedor.findAll();
+    return fornecedores;
+  } catch (error) {
+    throw new Error('Erro ao listar fornecedores');
+  }
 };
 
-// Função para criar fornecedor
+// Função para criar um novo fornecedor
 const createFornecedor = async (fornecedor) => {
-    try {
-        const novoFornecedor = await Fornecedor.create(fornecedor);
-        return novoFornecedor;
-    } catch (error) {
-        throw new Error('Erro ao criar fornecedor');
+  try {
+    const { nome, cnpj, endereco, telefone } = fornecedor;
+
+    // Verificações básicas
+    if (!nome || !cnpj || !telefone) {
+      throw new Error('Nome, CNPJ e telefone são obrigatórios');
     }
+
+    // Verifica se já existe fornecedor com mesmo CNPJ
+    const existente = await Fornecedor.findOne({ where: { cnpj } });
+    if (existente) {
+      throw new Error('Fornecedor com esse CNPJ já cadastrado');
+    }
+
+    const novoFornecedor = await Fornecedor.create({
+      nome,
+      cnpj,
+      endereco,
+      telefone,
+    });
+
+    return novoFornecedor;
+  } catch (error) {
+    console.error('Erro ao criar fornecedor:', error.message);
+    throw new Error(error.message || 'Erro ao criar fornecedor');
+  }
 };
 
 module.exports = { getAllFornecedores, createFornecedor };
