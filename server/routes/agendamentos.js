@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const { Op } = require('sequelize');
 
 const {
   getAllAgendamentos,
@@ -56,18 +57,45 @@ router.post('/upload', upload.single('xml'), async (req, res) => {
       return res.status(400).json({ message: 'data_hora_inicio inválida.' });
     }
 
-    dataInicio.setSeconds(0);
-    dataInicio.setMilliseconds(0);
+    dataInicio.setSeconds(0, 0);
+    const dataFim = new Date(dataInicio);
+    dataFim.setMinutes(dataInicio.getMinutes() + 1);
+
     agendamento.data_hora_inicio = dataInicio.toISOString();
+
+    // Forçar loja_id como número
+    agendamento.loja_id = Number(agendamento.loja_id);
+    console.log('Tipo de loja_id:', typeof agendamento.loja_id, 'Valor:', agendamento.loja_id);
+
+    // LOGS DE DEPURAÇÃO
+    console.log('Verificando conflito para:', {
+      loja_id: agendamento.loja_id,
+      data_agendamento: agendamento.data_agendamento,
+      data_hora_inicio: agendamento.data_hora_inicio
+    });
+
+    // Logar todos os agendamentos desse dia/loja para depuração
+    const ags = await Agendamento.findAll({
+      where: {
+        loja_id: agendamento.loja_id,
+        data_agendamento: agendamento.data_agendamento
+      }
+    });
+    console.log('Todos os agendamentos desse dia/loja:', ags.map(a => a.dataValues));
 
     const conflito = await Agendamento.findOne({
       where: {
+        loja_id: agendamento.loja_id,
         data_agendamento: agendamento.data_agendamento,
-        data_hora_inicio: agendamento.data_hora_inicio
+        data_hora_inicio: {
+          [Op.gte]: dataInicio.toISOString(),
+          [Op.lt]: dataFim.toISOString()
+        }
       }
     });
-
+    console.log('Resultado da busca de conflito:', conflito);
     if (conflito) {
+      console.log('Conflito encontrado:', conflito.dataValues);
       return res.status(409).json({ message: 'Já existe um agendamento neste horário.' });
     }
 
@@ -89,6 +117,7 @@ router.put('/:id', async (req, res) => {
   try {
     const id = req.params.id;
     const agendamento = req.body;
+    console.log('Atualizando agendamento', id, 'com dados:', agendamento);
     const agendamentoAtualizado = await updateAgendamento(id, agendamento);
     res.json(agendamentoAtualizado);
   } catch (error) {

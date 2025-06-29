@@ -17,11 +17,46 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
+// Toolbar personalizada para exibir mês/ano em português
+const CustomToolbar = (toolbar) => {
+  const goToBack = () => {
+    toolbar.onNavigate('PREV');
+  };
+
+  const goToNext = () => {
+    toolbar.onNavigate('NEXT');
+  };
+
+  const goToCurrent = () => {
+    toolbar.onNavigate('TODAY');
+  };
+
+  // Formata o mês e ano em português
+  const label = format(toolbar.date, "MMMM 'de' yyyy", { locale: ptBR });
+
+  return (
+    <div className="rbc-toolbar">
+      <span className="rbc-btn-group">
+        <button type="button" onClick={goToBack}>Anterior</button>
+        <button type="button" onClick={goToCurrent}>Hoje</button>
+        <button type="button" onClick={goToNext}>Próximo</button>
+      </span>
+      <span className="rbc-toolbar-label">{label}</span>
+    </div>
+  );
+};
+
 const AgendarUsuario = () => {
+  const [lojas, setLojas] = useState([]);
+  const [lojaSelecionada, setLojaSelecionada] = useState('');
   const [eventos, setEventos] = useState([]);
+  const [dataBase, setDataBase] = useState(() => {
+    const hoje = new Date();
+    return new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+  });
   const navigate = useNavigate();
 
-  const gerarHorariosDisponiveis = (data) => {
+  const gerarHorariosDisponiveis = (dataStr) => {
     const horarios = [];
     const turnos = [
       { inicio: 8, fim: 11 },
@@ -30,10 +65,9 @@ const AgendarUsuario = () => {
 
     turnos.forEach((turno) => {
       for (let hora = turno.inicio; hora < turno.fim; hora++) {
-        const inicio = new Date(data);
-        inicio.setHours(hora, 0, 0, 0);
-        const fim = new Date(inicio);
-        fim.setHours(hora + 1);
+        const horaStr = hora.toString().padStart(2, '0');
+        const inicio = new Date(`${dataStr}T${horaStr}:00:00`);
+        const fim = new Date(`${dataStr}T${(hora + 1).toString().padStart(2, '0')}:00:00`);
         horarios.push({ hora, start: inicio, end: fim });
       }
     });
@@ -41,61 +75,101 @@ const AgendarUsuario = () => {
     return horarios;
   };
 
+  // Buscar lojas ao carregar a tela
   useEffect(() => {
+    async function fetchLojas() {
+      try {
+        const response = await axios.get('http://localhost:3000/api/lojas');
+        setLojas(response.data);
+      } catch (error) {
+        console.error('Erro ao buscar lojas:', error);
+      }
+    }
+    fetchLojas();
+  }, []);
+
+  // Buscar agendamentos da loja selecionada e mês exibido
+  useEffect(() => {
+    if (!lojaSelecionada) return;
     async function fetchAgendamentos() {
       try {
-        const response = await axios.get('http://localhost:3000/api/agendamentos');
+        const response = await axios.get(`http://localhost:3000/api/agendamentos?loja_id=${lojaSelecionada}`);
         const agendamentos = response.data;
 
         const eventosFormatados = [];
         const agendadosPorData = {};
 
         agendamentos.forEach((item) => {
-          const data = item.data_agendamento;
-          const hora = new Date(item.data_hora_inicio).getHours();
+          const data = (typeof item.data_agendamento === 'string')
+            ? item.data_agendamento.slice(0, 10)
+            : new Date(item.data_agendamento).toISOString().slice(0, 10);
+          const dataHora = new Date(item.data_hora_inicio);
+          const hora = dataHora.getUTCHours().toString().padStart(2, '0');
+          const minuto = dataHora.getUTCMinutes().toString().padStart(2, '0');
+          const horarioCompleto = `${hora}:${minuto}`;
 
           if (!agendadosPorData[data]) agendadosPorData[data] = [];
-          agendadosPorData[data].push(hora);
+          agendadosPorData[data].push(horarioCompleto);
         });
 
+        // Gerar eventos para o mês exibido
+        const ano = dataBase.getFullYear();
+        const mes = dataBase.getMonth();
+        const primeiroDia = new Date(ano, mes, 1);
+        const ultimoDia = new Date(ano, mes + 1, 0);
+        const diasNoMes = ultimoDia.getDate();
         const hoje = new Date();
-        for (let i = 0; i < 15; i++) {
-          const dia = new Date(hoje);
-          dia.setDate(dia.getDate() + i);
-          const dataStr = format(dia, 'yyyy-MM-dd');
+        const hojeStr = format(hoje, 'yyyy-MM-dd');
+        for (let i = 0; i < diasNoMes; i++) {
+          const dataBaseDia = new Date(ano, mes, i + 1);
+          const dataStr = format(dataBaseDia, 'yyyy-MM-dd');
 
           const horarios = gerarHorariosDisponiveis(dataStr);
           const horasAgendadas = agendadosPorData[dataStr] || [];
-          const disponiveis = horarios.filter(({ hora }) => !horasAgendadas.includes(hora));
+          const disponiveis = horarios.filter(({ hora, start }) => {
+            const horaStr = hora.toString().padStart(2, '0') + ':00';
+            // Se for o dia de hoje, só mostra horários futuros
+            if (dataStr === hojeStr) {
+              const agora = new Date();
+              if (start <= agora) return false;
+            }
+            return !horasAgendadas.includes(horaStr);
+          });
 
           const start = horarios[0].start;
           const end = horarios[horarios.length - 1].end;
+          let isDiaPassado = false;
+          if (dataStr < hojeStr) {
+            isDiaPassado = true;
+          }
+          if (dataStr === hojeStr) {
+            isDiaPassado = false;
+          }
 
-          eventosFormatados.push({
+          const evento = {
             id: dataStr,
-            title: isBefore(start, new Date())
+            title: isDiaPassado
               ? 'Data passada'
               : disponiveis.length > 0
               ? `${disponiveis.length} horário(s) disponível(eis)`
               : 'Agendado',
             start,
             end,
-            status: isBefore(start, new Date())
+            status: isDiaPassado
               ? 'passado'
               : disponiveis.length > 0
               ? 'disponivel'
               : 'agendado',
-          });
+          };
+          eventosFormatados.push(evento);
         }
-
         setEventos(eventosFormatados);
       } catch (error) {
         console.error('Erro ao buscar agendamentos:', error);
       }
     }
-
     fetchAgendamentos();
-  }, []);
+  }, [lojaSelecionada, dataBase]);
 
   const eventStyleGetter = (event) => {
     let backgroundColor;
@@ -128,37 +202,60 @@ const AgendarUsuario = () => {
   };
 
   const handleSelectSlot = (slotInfo) => {
-    if (isBefore(slotInfo.start, new Date())) return;
     const dataSelecionada = format(slotInfo.start, 'yyyy-MM-dd');
-    navigate('/agendar-usuario2', { state: { data: dataSelecionada } });
+    const hojeStr = format(new Date(), 'yyyy-MM-dd');
+    if (dataSelecionada < hojeStr) return;
+    navigate('/agendar-usuario2', { state: { data: dataSelecionada, loja_id: lojaSelecionada } });
+  };
+
+  const handleNavigate = (newDate) => {
+    setDataBase(new Date(newDate.getFullYear(), newDate.getMonth(), 1));
   };
 
   return (
     <div className="agendamento-container">
       <h2>Agendamento de Cargas</h2>
-      <Calendar
-        localizer={localizer}
-        events={eventos}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 500 }}
-        selectable
-        onSelectSlot={handleSelectSlot}
-        eventPropGetter={eventStyleGetter}
-        messages={{
-          next: 'Próximo',
-          previous: 'Anterior',
-          today: 'Hoje',
-          month: 'Mês',
-          week: 'Semana',
-          day: 'Dia',
-          agenda: 'Agenda',
-          date: 'Data',
-          time: 'Hora',
-          event: 'Evento',
-          noEventsInRange: 'Não há eventos neste período.',
-        }}
-      />
+      <div className="campo">
+        <label>Selecione a loja:</label>
+        <select value={lojaSelecionada} onChange={e => setLojaSelecionada(e.target.value)}>
+          <option value="">Selecione uma loja</option>
+          {lojas.map(loja => (
+            <option key={loja.id} value={loja.id}>{loja.nome}</option>
+          ))}
+        </select>
+      </div>
+      {lojaSelecionada && (
+        <Calendar
+          localizer={localizer}
+          events={eventos}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: 500 }}
+          selectable
+          onSelectSlot={handleSelectSlot}
+          eventPropGetter={eventStyleGetter}
+          messages={{
+            next: 'Próximo',
+            previous: 'Anterior',
+            today: 'Hoje',
+            month: 'Mês',
+            week: 'Semana',
+            day: 'Dia',
+            agenda: 'Agenda',
+            date: 'Data',
+            time: 'Hora',
+            event: 'Evento',
+            noEventsInRange: 'Não há eventos neste período.',
+          }}
+          views={['month']}
+          defaultView="month"
+          onNavigate={handleNavigate}
+          date={dataBase}
+          components={{
+            toolbar: CustomToolbar,
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../inicio.css';
 
 function PaginaInicialFornecedor() {
   const [nomeUsuario, setNomeUsuario] = useState('');
   const [nomeEmpresa, setNomeEmpresa] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const nome = localStorage.getItem('nome');
@@ -14,6 +15,11 @@ function PaginaInicialFornecedor() {
     if (empresa) setNomeEmpresa(empresa);
   }, []);
 
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/login');
+  };
+
   return (
     <div className="container">
       <header className="header">
@@ -22,6 +28,7 @@ function PaginaInicialFornecedor() {
           <p className="bem-vindo">
             Bem-vindo(a), <strong>{nomeUsuario}</strong>
             {nomeEmpresa && <> – Empresa: <strong>{nomeEmpresa}</strong></>}
+            <button className="botao logout" onClick={handleLogout} style={{marginLeft: 24}}>Logout</button>
           </p>
         )}
       </header>

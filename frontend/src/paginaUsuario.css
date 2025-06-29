@@ -1,41 +1,37 @@
+.titulo {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
 
-  .titulo {
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  
-  .secao-1, .-PIU-secao-2 {
-    background-color: #fff; /* cor de fundo branco */
-    padding: 20px;
-    margin: 20px;
-    border: 1px solid #ddd; /* borda cinza */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* sombra */
-  }
-  
-  .subtitulo {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .texto {
-    font-size: 18px;
-    margin-bottom: 20px;
-  }
-  
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
 
-  
+.secao-1, .-PIU-secao-2 {
+  background-color: #fff; /* cor de fundo branco */
+  padding: 20px;
+  margin: 20px;
+  border: 1px solid #ddd; /* borda cinza */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* sombra */
+}
 
-  .botao-horario {
+.subtitulo {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.texto {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.botao-horario {
   margin: 8px;
   padding: 10px 16px;
   background-color: #f0f0f0;
@@ -66,6 +62,7 @@
   background-color: #ccc;
   cursor: not-allowed;
 }
+
 /* Estilo base para eventos do calendário */
 .rbc-event {
   transition: opacity 0.3s ease;
@@ -80,7 +77,13 @@
 .event-disponivel.hovered {
   opacity: 1;
 }
+
 .rbc-event:hover {
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
   transition: box-shadow 0.2s ease;
+}
+
+/* Esconde os botões de view do calendário (Mês, Semana, Dia, Agenda) */
+.rbc-toolbar .rbc-btn-group:nth-child(2) {
+  display: none;
 }

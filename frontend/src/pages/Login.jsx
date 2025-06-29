@@ -35,6 +35,8 @@ const handleLogin = async (e) => {
     if (tipo === 'FORNECEDOR') {
       navigate('/pagina-inicial-fornecedor');
     } else {
+      localStorage.removeItem('fornecedor_id');
+      localStorage.removeItem('fornecedor_nome');
       navigate('/pagina-inicial-usuario');
     }
   } catch (err) {

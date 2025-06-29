@@ -97,3 +97,4 @@ ALTER TABLE agendamentos ADD COLUMN arquivo_xml VARCHAR(255);
 DELETE FROM usuarios
 
 DESCRIBE usuarios;
+SELECT * FROM agendamentos WHERE loja_id = 2;

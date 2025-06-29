@@ -2,51 +2,42 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../meusAgendamentos.css';
 
-function MeusAgendamentos() {
+function Agendamentos() {
   const [agendamentos, setAgendamentos] = useState([]);
-  const [erro, setErro] = useState('');
   const [filtroData, setFiltroData] = useState('');
-  const [filtroStatus, setFiltroStatus] = useState('');
   const [filtroLoja, setFiltroLoja] = useState('');
+  const [filtroFornecedor, setFiltroFornecedor] = useState('');
+  const [filtroStatus, setFiltroStatus] = useState('');
   const [lojas, setLojas] = useState([]);
+  const [fornecedores, setFornecedores] = useState([]);
+  const [statusUnicos, setStatusUnicos] = useState([]);
 
   useEffect(() => {
-    const nomeEmpresa = localStorage.getItem('fornecedor_nome');
-    console.log('Nome da empresa encontrado no localStorage:', nomeEmpresa);
-
-    if (!nomeEmpresa) {
-      setErro('Empresa do fornecedor não encontrada.');
-      return;
-    }
-
-    const fetchAgendamentos = async () => {
+    async function fetchAgendamentos() {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/agendamentos/fornecedor/${encodeURIComponent(nomeEmpresa)}`
-        );
+        const response = await axios.get('http://localhost:3000/api/agendamentos');
         setAgendamentos(response.data);
-        // Preencher lojas únicas para filtro
-        const lojasUnicas = Array.from(new Set(response.data.map(a => a.loja?.nome).filter(Boolean)));
-        setLojas(lojasUnicas);
+        // Lojas únicas
+        setLojas(Array.from(new Set(response.data.map(a => a.loja?.nome).filter(Boolean))));
+        // Fornecedores únicos
+        setFornecedores(Array.from(new Set(response.data.map(a => a.fornecedorAgendamento?.nome).filter(Boolean))));
+        // Status únicos
+        setStatusUnicos(Array.from(new Set(response.data.map(a => a.status).filter(Boolean))));
       } catch (err) {
-        console.error('Erro ao buscar agendamentos:', err);
-        setErro('Erro ao buscar agendamentos');
+        setAgendamentos([]);
       }
-    };
-
+    }
     fetchAgendamentos();
   }, []);
 
-  // Filtragem dos agendamentos
+  // Filtragem
   const agendamentosFiltrados = agendamentos.filter(ag => {
     const dataOk = !filtroData || (ag.data_agendamento && ag.data_agendamento.slice(0, 10) === filtroData);
-    const statusOk = !filtroStatus || ag.status === filtroStatus;
     const lojaOk = !filtroLoja || ag.loja?.nome === filtroLoja;
-    return dataOk && statusOk && lojaOk;
+    const fornecedorOk = !filtroFornecedor || ag.fornecedorAgendamento?.nome === filtroFornecedor;
+    const statusOk = !filtroStatus || ag.status === filtroStatus;
+    return dataOk && lojaOk && fornecedorOk && statusOk;
   });
-
-  // Obter todos os status únicos para filtro
-  const statusUnicos = Array.from(new Set(agendamentos.map(a => a.status).filter(Boolean)));
 
   // Função utilitária para formatar data e hora
   function formatarData(dataStr) {
@@ -62,8 +53,7 @@ function MeusAgendamentos() {
 
   return (
     <div className="meus-agendamentos-container">
-      <h2 className="titulo-agendamentos">Meus Agendamentos</h2>
-      {/* Filtros */}
+      <h2 className="titulo-agendamentos">Todos os Agendamentos</h2>
       <div className="filtros-agendamentos">
         <input
           type="date"
@@ -71,16 +61,6 @@ function MeusAgendamentos() {
           onChange={e => setFiltroData(e.target.value)}
           className="filtro-input"
         />
-        <select
-          value={filtroStatus}
-          onChange={e => setFiltroStatus(e.target.value)}
-          className="filtro-input"
-        >
-          <option value="">Status</option>
-          {statusUnicos.map(status => (
-            <option key={status} value={status}>{status.charAt(0) + status.slice(1).toLowerCase()}</option>
-          ))}
-        </select>
         <select
           value={filtroLoja}
           onChange={e => setFiltroLoja(e.target.value)}
@@ -91,14 +71,34 @@ function MeusAgendamentos() {
             <option key={loja} value={loja}>{loja}</option>
           ))}
         </select>
-        {(filtroData || filtroStatus || filtroLoja) && (
-          <button className="filtro-limpar" onClick={() => {setFiltroData('');setFiltroStatus('');setFiltroLoja('');}}>
+        <select
+          value={filtroFornecedor}
+          onChange={e => setFiltroFornecedor(e.target.value)}
+          className="filtro-input"
+        >
+          <option value="">Fornecedor</option>
+          {fornecedores.map(f => (
+            <option key={f} value={f}>{f}</option>
+          ))}
+        </select>
+        <select
+          value={filtroStatus}
+          onChange={e => setFiltroStatus(e.target.value)}
+          className="filtro-input"
+        >
+          <option value="">Status</option>
+          {statusUnicos.map(status => (
+            <option key={status} value={status}>{status.charAt(0) + status.slice(1).toLowerCase()}</option>
+          ))}
+        </select>
+        {(filtroData || filtroLoja || filtroFornecedor || filtroStatus) && (
+          <button className="filtro-limpar" onClick={() => {
+            setFiltroData(''); setFiltroLoja(''); setFiltroFornecedor(''); setFiltroStatus('');
+          }}>
             Limpar filtros
           </button>
         )}
       </div>
-      {erro && agendamentosFiltrados.length === 0 && <p className="erro-agendamento">{erro}</p>}
-      {!erro && agendamentosFiltrados.length === 0 && <p className="nenhum-agendamento">Nenhum agendamento encontrado.</p>}
       <div className="agendamentos-lista">
         {agendamentosFiltrados.map((agendamento) => (
           <div className="agendamento-card" key={agendamento.id}>
@@ -107,13 +107,8 @@ function MeusAgendamentos() {
               <span className="agendamento-horario"><strong>Horário:</strong> {formatarHora(agendamento.data_hora_inicio)}</span>
               <span className="agendamento-loja"><strong>Loja:</strong> {agendamento.loja?.nome || 'N/A'}</span>
               <span className="agendamento-fornecedor"><strong>Fornecedor:</strong> {agendamento.fornecedorAgendamento?.nome || 'N/A'}</span>
+              <span className="agendamento-status"><strong>Status:</strong> {agendamento.status?.charAt(0) + agendamento.status?.slice(1).toLowerCase()}</span>
             </div>
-            {/* Exemplo de status, se existir no objeto agendamento */}
-            {agendamento.status && (
-              <span className={`agendamento-status status-${agendamento.status.toLowerCase()}`}>
-                {agendamento.status.charAt(0) + agendamento.status.slice(1).toLowerCase()}
-              </span>
-            )}
           </div>
         ))}
       </div>
@@ -121,4 +116,4 @@ function MeusAgendamentos() {
   );
 }
 
-export default MeusAgendamentos;
+export default Agendamentos; 

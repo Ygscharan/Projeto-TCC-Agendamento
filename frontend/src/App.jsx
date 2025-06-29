@@ -10,6 +10,7 @@ import GerenciarPedidos from './pages/gerenciarPedidos';
 import CadastrarEmpresa from './pages/cadastrarEmpresa';
 import MeusAgendamentos from './pages/meusAgendamentos';
 import AdicionarLoja from './pages/adicionarLoja';
+import Agendamentos from './pages/agendamentos';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/cadastrar-empresa" element={<CadastrarEmpresa />} />
         <Route path="/meus-agendamentos" element={<MeusAgendamentos />} />
         <Route path="/adicionar-loja" element={<AdicionarLoja />} />
+        <Route path="/agendamentos" element={<Agendamentos />} />
       </Routes>
     </BrowserRouter>
   );

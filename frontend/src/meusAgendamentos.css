@@ -1,0 +1,148 @@
+/* Estilo para a tela Meus Agendamentos */
+.meus-agendamentos-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 24px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+.titulo-agendamentos {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 32px;
+  color: #2d3a4b;
+}
+
+.erro-agendamento {
+  color: #d32f2f;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.nenhum-agendamento {
+  color: #888;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.agendamentos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.agendamento-card {
+  background: #f7fafd;
+  border: 1px solid #e3e8ee;
+  border-radius: 12px;
+  padding: 20px 28px;
+  width: 100%;
+  max-width: 500px;
+  min-width: 260px;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(44,62,80,0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+
+.agendamento-card:hover {
+  box-shadow: 0 6px 24px rgba(44,62,80,0.13);
+}
+
+.agendamento-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.agendamento-data,
+.agendamento-horario,
+.agendamento-loja,
+.agendamento-fornecedor {
+  font-size: 1.05rem;
+  color: #2d3a4b;
+}
+
+.agendamento-status {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.status-pendente {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+.status-aprovado {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+.status-rejeitado {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+@media (max-width: 700px) {
+  .meus-agendamentos-container {
+    padding: 8px;
+  }
+  .agendamentos-lista {
+    gap: 12px;
+  }
+  .agendamento-card {
+    min-width: 90vw;
+    max-width: 98vw;
+    padding: 14px 8px;
+  }
+}
+
+.filtros-agendamentos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.filtro-input {
+  padding: 8px 12px;
+  border: 1px solid #cfd8dc;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #f7fafd;
+  color: #2d3a4b;
+  outline: none;
+  transition: border 0.2s;
+}
+.filtro-input:focus {
+  border: 1.5px solid #1976d2;
+}
+
+.filtro-limpar {
+  background: #e57373;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.filtro-limpar:hover {
+  background: #c62828;
+} 

@@ -48,7 +48,7 @@
 /* ------------------------------
    Botões de horário
 ------------------------------ */
-.botao-horario {
+.agendamento-container .botao-horario {
   margin: 6px;
   padding: 10px 22px;
   border: none;
@@ -60,18 +60,18 @@
   transition: background-color 0.3s ease;
 }
 
-.botao-horario:hover:not(:disabled):not(.ocupado) {
+.agendamento-container .botao-horario:hover:not(:disabled):not(.ocupado) {
   background-color: #0056b3;
 }
 
 /* Selecionado */
-.botao-horario.selecionado {
+.agendamento-container .botao-horario.selecionado {
   background-color: #28a745;
 }
 
 /* Ocupado */
-.botao-horario.ocupado,
-.botao-horario:disabled {
+.agendamento-container .botao-horario.ocupado,
+.agendamento-container .botao-horario:disabled {
   background-color: #6c757d;
   color: #e0e0e0;
   cursor: not-allowed;
@@ -80,7 +80,7 @@
 /* ------------------------------
    Botão de confirmação
 ------------------------------ */
-.botao-confirmar {
+.agendamento-container .botao-confirmar {
   margin-top: 20px;
   padding: 12px;
   width: 100%;
@@ -93,11 +93,11 @@
   transition: background-color 0.3s ease;
 }
 
-.botao-confirmar:hover:not(:disabled) {
+.agendamento-container .botao-confirmar:hover:not(:disabled) {
   background-color: #218838;
 }
 
-.botao-confirmar:disabled {
+.agendamento-container .botao-confirmar:disabled {
   background-color: #ccc;
   color: #666;
   cursor: not-allowed;

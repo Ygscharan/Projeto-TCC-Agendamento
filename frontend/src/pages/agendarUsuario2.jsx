@@ -2,16 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../agendarUsuario2.css';
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 
 const horariosPermitidos = [
   '08:00', '09:00', '10:00', '11:00',
   '13:00', '14:00', '15:00', '16:00', '17:00'
 ];
 
+// Função utilitária para formatar data yyyy-MM-dd para dd/MM/yyyy
+function formatarDataString(dataStr) {
+  if (!dataStr) return '';
+  const [ano, mes, dia] = dataStr.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
 const AgendarUsuario2 = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dataSelecionada = location.state?.data;
+  const lojaId = location.state?.loja_id;
+  const fornecedorId = localStorage.getItem('fornecedor_id');
 
   const [horariosOcupados, setHorariosOcupados] = useState([]);
   const [horarioSelecionado, setHorarioSelecionado] = useState(null);
@@ -19,13 +30,21 @@ const AgendarUsuario2 = () => {
 
   useEffect(() => {
     async function buscarHorarios() {
-      if (!dataSelecionada) return;
+      if (!dataSelecionada || !lojaId) return;
 
       try {
-        const response = await axios.get('http://localhost:3000/api/agendamentos');
+        const response = await axios.get(`http://localhost:3000/api/agendamentos?loja_id=${lojaId}`);
+        console.log('Agendamentos recebidos:', response.data);
         const agendamentosDoDia = response.data.filter(
-          ag => ag.data_agendamento === dataSelecionada
+          ag => {
+            // Extrai só a parte da data, seja qual for o formato
+            const dataAg = (typeof ag.data_agendamento === 'string')
+              ? ag.data_agendamento.slice(0, 10)
+              : new Date(ag.data_agendamento).toISOString().slice(0, 10);
+            return dataAg === dataSelecionada;
+          }
         );
+        console.log('Agendamentos do dia:', agendamentosDoDia);
 
         const ocupados = agendamentosDoDia.map((ag) => {
           const data = new Date(ag.data_hora_inicio);
@@ -33,7 +52,7 @@ const AgendarUsuario2 = () => {
           const minuto = data.getUTCMinutes().toString().padStart(2, '0');
           return `${hora}:${minuto}`;
         });
-
+        console.log('Horários ocupados:', ocupados);
         setHorariosOcupados(ocupados);
       } catch (error) {
         console.error('Erro ao buscar agendamentos:', error);
@@ -41,7 +60,7 @@ const AgendarUsuario2 = () => {
     }
 
     buscarHorarios();
-  }, [dataSelecionada]);
+  }, [dataSelecionada, lojaId]);
 
   const handleArquivoChange = (e) => {
     setArquivoXML(e.target.files[0]);
@@ -50,6 +69,13 @@ const AgendarUsuario2 = () => {
   const handleAgendar = async () => {
     if (!horarioSelecionado) return alert('Selecione um horário');
     if (!arquivoXML) return alert('Selecione um arquivo XML');
+    if (!lojaId) return alert('Loja não selecionada!');
+
+    // Só bloqueia se o usuário for fornecedor e não tiver fornecedorId
+    const tipoUsuario = localStorage.getItem('tipo');
+    if (tipoUsuario === 'FORNECEDOR' && !fornecedorId) {
+      return alert('Fornecedor não identificado!');
+    }
 
     // Cria um objeto Date no horário local e depois converte para UTC
     const [hora, minuto] = horarioSelecionado.split(':');
@@ -57,15 +83,27 @@ const AgendarUsuario2 = () => {
     const dataHoraInicio = new Date(dataHora.getTime() - dataHora.getTimezoneOffset() * 60000); // Corrige timezone
     const dataHoraFim = new Date(dataHoraInicio.getTime() + 59 * 60 * 1000 + 59000); // +59min59s
 
+    // LOGS DE DEPURAÇÃO
+    console.log('dataSelecionada:', dataSelecionada);
+    console.log('dataHoraInicio (UTC):', dataHoraInicio.toISOString());
+    console.log('dataHoraFim (UTC):', dataHoraFim.toISOString());
+
     const formData = new FormData();
-    formData.append('fornecedor_id', 1);
-    formData.append('loja_id', 1);
-    formData.append('nota_fiscal_id', 1);
+    formData.append('loja_id', lojaId);
+    formData.append('nota_fiscal_id', 1); // Ajuste conforme necessário
     formData.append('data_agendamento', dataSelecionada);
     formData.append('data_hora_inicio', dataHoraInicio.toISOString());
     formData.append('data_hora_fim', dataHoraFim.toISOString());
     formData.append('status', 'pendente');
     formData.append('xml', arquivoXML);
+
+    if (fornecedorId) {
+      formData.append('fornecedor_id', fornecedorId);
+    }
+    // Log para depuração
+    for (let pair of formData.entries()) {
+      console.log(pair[0]+ ': ' + pair[1]);
+    }
 
     try {
       await axios.post('http://localhost:3000/api/agendamentos/upload', formData, {
@@ -73,7 +111,11 @@ const AgendarUsuario2 = () => {
       });
 
       alert('Agendamento realizado com sucesso!');
-      navigate('/');
+      if (tipoUsuario === 'FORNECEDOR') {
+        navigate('/pagina-inicial-fornecedor');
+      } else {
+        navigate('/pagina-inicial-usuario');
+      }
     } catch (error) {
       console.error('Erro ao agendar:', error);
       if (error.response?.status === 409) {
@@ -86,17 +128,33 @@ const AgendarUsuario2 = () => {
 
   return (
     <div className="agendamento-container">
-      <h2>Agendar para o dia {dataSelecionada}</h2>
+      <h2>Agendar para o dia {formatarDataString(dataSelecionada)}</h2>
 
       <div className="horarios-disponiveis">
         {horariosPermitidos.map((horario) => {
-          const ocupado = horariosOcupados.includes(horario);
+          // Forçar formato HH:mm
+          const [h, m] = horario.split(':');
+          const horarioFormatado = `${h.padStart(2, '0')}:${m.padStart(2, '0')}`;
+          const ocupado = horariosOcupados.includes(horarioFormatado);
+
+          // Desabilitar horários passados no dia de hoje
+          let horarioPassado = false;
+          const hojeStr = new Date().toISOString().slice(0, 10);
+          if (dataSelecionada === hojeStr) {
+            const agora = new Date();
+            const horaAtual = agora.getHours();
+            const minutoAtual = agora.getMinutes();
+            if (parseInt(h) < horaAtual || (parseInt(h) === horaAtual && parseInt(m) <= minutoAtual)) {
+              horarioPassado = true;
+            }
+          }
+
           return (
             <button
               key={horario}
-              className={`botao-horario ${ocupado ? 'ocupado' : ''} ${horarioSelecionado === horario ? 'selecionado' : ''}`}
-              onClick={() => !ocupado && setHorarioSelecionado(horario)}
-              disabled={ocupado}
+              className={`botao-horario ${ocupado || horarioPassado ? 'ocupado' : ''} ${horarioSelecionado === horario ? 'selecionado' : ''}`}
+              onClick={() => !ocupado && !horarioPassado && setHorarioSelecionado(horario)}
+              disabled={ocupado || horarioPassado}
             >
               {horario}
             </button>
