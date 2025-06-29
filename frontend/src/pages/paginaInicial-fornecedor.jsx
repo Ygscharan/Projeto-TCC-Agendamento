@@ -9,10 +9,10 @@ function PaginaInicialFornecedor() {
 
   useEffect(() => {
     const nome = localStorage.getItem('nome');
-    const empresa = localStorage.getItem('empresa');
+    const fornecedor = localStorage.getItem('fornecedor_nome');
 
     if (nome) setNomeUsuario(nome);
-    if (empresa) setNomeEmpresa(empresa);
+    if (fornecedor) setNomeEmpresa(fornecedor);
   }, []);
 
   const handleLogout = () => {
@@ -27,7 +27,7 @@ function PaginaInicialFornecedor() {
         {(nomeUsuario || nomeEmpresa) && (
           <p className="bem-vindo">
             Bem-vindo(a), <strong>{nomeUsuario}</strong>
-            {nomeEmpresa && <> – Empresa: <strong>{nomeEmpresa}</strong></>}
+            {nomeEmpresa && <>, fornecedor: <strong>{nomeEmpresa}</strong></>}
             <button className="botao logout" onClick={handleLogout} style={{marginLeft: 24}}>Logout</button>
           </p>
         )}
