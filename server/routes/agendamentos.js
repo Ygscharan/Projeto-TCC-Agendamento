@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 
 const {
   getAllAgendamentos,
-  getAgendamentosPorFornecedor, // ✅ Adicionado
+  getAgendamentosPorFornecedor, 
   createAgendamento,
   updateAgendamento,
   deleteAgendamento
@@ -15,7 +15,7 @@ const { Agendamento } = require('../models');
 
 const router = express.Router();
 
-// Configuração do multer para upload de XML
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
@@ -37,13 +37,13 @@ const upload = multer({
   }
 });
 
-// ✅ Nova rota para buscar agendamentos por nome do fornecedor
+
 router.get('/fornecedor/:nomeFornecedor', getAgendamentosPorFornecedor);
 
-// Rota para listar todos os agendamentos
+
 router.get('/', getAllAgendamentos);
 
-// Rota para criar um novo agendamento com upload de XML
+
 router.post('/upload', upload.single('xml'), async (req, res) => {
   try {
     const agendamento = req.body;
@@ -63,18 +63,18 @@ router.post('/upload', upload.single('xml'), async (req, res) => {
 
     agendamento.data_hora_inicio = dataInicio.toISOString();
 
-    // Forçar loja_id como número
+    
     agendamento.loja_id = Number(agendamento.loja_id);
     console.log('Tipo de loja_id:', typeof agendamento.loja_id, 'Valor:', agendamento.loja_id);
 
-    // LOGS DE DEPURAÇÃO
+    
     console.log('Verificando conflito para:', {
       loja_id: agendamento.loja_id,
       data_agendamento: agendamento.data_agendamento,
       data_hora_inicio: agendamento.data_hora_inicio
     });
 
-    // Logar todos os agendamentos desse dia/loja para depuração
+    
     const ags = await Agendamento.findAll({
       where: {
         loja_id: agendamento.loja_id,
@@ -90,6 +90,9 @@ router.post('/upload', upload.single('xml'), async (req, res) => {
         data_hora_inicio: {
           [Op.gte]: dataInicio.toISOString(),
           [Op.lt]: dataFim.toISOString()
+        },
+        status: {
+          [Op.not]: 'CANCELADO'
         }
       }
     });
@@ -112,7 +115,7 @@ router.post('/upload', upload.single('xml'), async (req, res) => {
   }
 });
 
-// Rota para atualizar um agendamento
+
 router.put('/:id', async (req, res) => {
   try {
     const id = req.params.id;
@@ -125,7 +128,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Rota para deletar um agendamento
+
 router.delete('/:id', async (req, res) => {
   try {
     const id = req.params.id;

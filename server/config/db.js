@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
-// Configuração do Sequelize usando as variáveis de ambiente
+
 const sequelize = new Sequelize({
   database: process.env.DB_NAME,
   username: process.env.DB_USER,

@@ -1,14 +1,14 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../config/db');
 
-// Importa os models
+
 const Agendamento = require('./agendamento');
 const Fornecedor = require('./fornecedor');
 const Loja = require('./loja');
 const NotaFiscal = require('./notaFiscal');
 const Usuario = require('./Usuario');
 
-// Cria o objeto `db`
+
 const db = {
   Sequelize,
   sequelize,
@@ -19,7 +19,7 @@ const db = {
   Usuario,
 };
 
-// Aplica as associações (se existirem)
+
 Object.values(db).forEach(model => {
   if (model.associate) {
     model.associate(db);

@@ -2,15 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../agendarUsuario2.css';
-import { format } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
 
 const horariosPermitidos = [
   '08:00', '09:00', '10:00', '11:00',
   '13:00', '14:00', '15:00', '16:00', '17:00'
 ];
 
-// Função utilitária para formatar data yyyy-MM-dd para dd/MM/yyyy
+
 function formatarDataString(dataStr) {
   if (!dataStr) return '';
   const [ano, mes, dia] = dataStr.split('-');
@@ -37,11 +35,11 @@ const AgendarUsuario2 = () => {
         console.log('Agendamentos recebidos:', response.data);
         const agendamentosDoDia = response.data.filter(
           ag => {
-            // Extrai só a parte da data, seja qual for o formato
+            
             const dataAg = (typeof ag.data_agendamento === 'string')
               ? ag.data_agendamento.slice(0, 10)
               : new Date(ag.data_agendamento).toISOString().slice(0, 10);
-            return dataAg === dataSelecionada;
+            return dataAg === dataSelecionada && ag.status !== 'CANCELADO';
           }
         );
         console.log('Agendamentos do dia:', agendamentosDoDia);
@@ -71,26 +69,26 @@ const AgendarUsuario2 = () => {
     if (!arquivoXML) return alert('Selecione um arquivo XML');
     if (!lojaId) return alert('Loja não selecionada!');
 
-    // Só bloqueia se o usuário for fornecedor e não tiver fornecedorId
+    
     const tipoUsuario = localStorage.getItem('tipo');
     if (tipoUsuario === 'FORNECEDOR' && !fornecedorId) {
       return alert('Fornecedor não identificado!');
     }
 
-    // Cria um objeto Date no horário local e depois converte para UTC
+    
     const [hora, minuto] = horarioSelecionado.split(':');
     const dataHora = new Date(`${dataSelecionada}T${hora}:${minuto}:00`);
-    const dataHoraInicio = new Date(dataHora.getTime() - dataHora.getTimezoneOffset() * 60000); // Corrige timezone
-    const dataHoraFim = new Date(dataHoraInicio.getTime() + 59 * 60 * 1000 + 59000); // +59min59s
+    const dataHoraInicio = new Date(dataHora.getTime() - dataHora.getTimezoneOffset() * 60000); 
+    const dataHoraFim = new Date(dataHoraInicio.getTime() + 59 * 60 * 1000 + 59000); 
 
-    // LOGS DE DEPURAÇÃO
+    
     console.log('dataSelecionada:', dataSelecionada);
     console.log('dataHoraInicio (UTC):', dataHoraInicio.toISOString());
     console.log('dataHoraFim (UTC):', dataHoraFim.toISOString());
 
     const formData = new FormData();
     formData.append('loja_id', lojaId);
-    formData.append('nota_fiscal_id', 1); // Ajuste conforme necessário
+    formData.append('nota_fiscal_id', 1); 
     formData.append('data_agendamento', dataSelecionada);
     formData.append('data_hora_inicio', dataHoraInicio.toISOString());
     formData.append('data_hora_fim', dataHoraFim.toISOString());
@@ -100,7 +98,7 @@ const AgendarUsuario2 = () => {
     if (fornecedorId) {
       formData.append('fornecedor_id', fornecedorId);
     }
-    // Log para depuração
+    
     for (let pair of formData.entries()) {
       console.log(pair[0]+ ': ' + pair[1]);
     }
@@ -132,12 +130,12 @@ const AgendarUsuario2 = () => {
 
       <div className="horarios-disponiveis">
         {horariosPermitidos.map((horario) => {
-          // Forçar formato HH:mm
+          
           const [h, m] = horario.split(':');
           const horarioFormatado = `${h.padStart(2, '0')}:${m.padStart(2, '0')}`;
           const ocupado = horariosOcupados.includes(horarioFormatado);
 
-          // Desabilitar horários passados no dia de hoje
+          
           let horarioPassado = false;
           const hojeStr = new Date().toISOString().slice(0, 10);
           if (dataSelecionada === hojeStr) {

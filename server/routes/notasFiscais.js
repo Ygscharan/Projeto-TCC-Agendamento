@@ -2,7 +2,7 @@ const express = require('express');
 const { getAllNotasFiscais, createNotaFiscal } = require('../controllers/notaFiscalController');
 const router = express.Router();
 
-// Rota para listar todas as notas fiscais
+
 router.get('/', async (req, res) => {
     try {
         const notasFiscais = await getAllNotasFiscais();
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Rota para criar uma nova nota fiscal
+
 router.post('/', async (req, res) => {
     try {
         const novaNotaFiscal = await createNotaFiscal(req.body);

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../meusAgendamentos.css';
+import { toZonedTime, format as formatTz } from 'date-fns-tz';
 
 function MeusAgendamentos() {
   const [agendamentos, setAgendamentos] = useState([]);
@@ -25,7 +26,7 @@ function MeusAgendamentos() {
           `http://localhost:3000/api/agendamentos/fornecedor/${encodeURIComponent(nomeEmpresa)}`
         );
         setAgendamentos(response.data);
-        // Preencher lojas únicas para filtro
+        
         const lojasUnicas = Array.from(new Set(response.data.map(a => a.loja?.nome).filter(Boolean)));
         setLojas(lojasUnicas);
       } catch (err) {
@@ -37,7 +38,7 @@ function MeusAgendamentos() {
     fetchAgendamentos();
   }, []);
 
-  // Filtragem dos agendamentos
+  
   const agendamentosFiltrados = agendamentos.filter(ag => {
     const dataOk = !filtroData || (ag.data_agendamento && ag.data_agendamento.slice(0, 10) === filtroData);
     const statusOk = !filtroStatus || ag.status === filtroStatus;
@@ -45,19 +46,18 @@ function MeusAgendamentos() {
     return dataOk && statusOk && lojaOk;
   });
 
-  // Obter todos os status únicos para filtro
+  
   const statusUnicos = Array.from(new Set(agendamentos.map(a => a.status).filter(Boolean)));
 
-  // Função utilitária para formatar data e hora
+  
   function formatarData(dataStr) {
     if (!dataStr) return '';
-    const d = new Date(dataStr);
-    return d.toLocaleDateString('pt-BR');
+    const [ano, mes, dia] = dataStr.slice(0, 10).split('-');
+    return `${dia}/${mes}/${ano}`;
   }
   function formatarHora(dataStr) {
     if (!dataStr) return '';
-    const d = new Date(dataStr);
-    return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false });
+    return dataStr.slice(11, 16);
   }
 
   return (

@@ -1,6 +1,6 @@
 const Fornecedor = require('../models/fornecedor');
 
-// Função para listar todos os fornecedores
+
 const getAllFornecedores = async () => {
   try {
     const fornecedores = await Fornecedor.findAll();
@@ -10,17 +10,17 @@ const getAllFornecedores = async () => {
   }
 };
 
-// Função para criar um novo fornecedor
+
 const createFornecedor = async (fornecedor) => {
   try {
     const { nome, cnpj, endereco, telefone } = fornecedor;
 
-    // Verificações básicas
+    
     if (!nome || !cnpj || !telefone) {
       throw new Error('Nome, CNPJ e telefone são obrigatórios');
     }
 
-    // Verifica se já existe fornecedor com mesmo CNPJ
+    
     const existente = await Fornecedor.findOne({ where: { cnpj } });
     if (existente) {
       throw new Error('Fornecedor com esse CNPJ já cadastrado');

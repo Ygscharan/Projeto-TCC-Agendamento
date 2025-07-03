@@ -5,7 +5,7 @@ const Fornecedor = require('../models/fornecedor');
 
 const SECRET_KEY = 'seu_segredo_super_secreto';
 
-// Registrar usuário
+
 exports.register = async (req, res) => {
   try {
     const { nome, email, senha, tipo, fornecedor_id } = req.body;
@@ -36,12 +36,12 @@ exports.register = async (req, res) => {
   }
 };
 
-// Login do usuário
+
 exports.login = async (req, res) => {
   try {
     const { email, senha } = req.body;
 
-    // Busca o usuário com o fornecedor associado (se existir)
+    
     const usuario = await Usuario.findOne({
       where: { email },
       include: [{ model: Fornecedor, as: 'fornecedorUsuario' }]
@@ -58,7 +58,7 @@ exports.login = async (req, res) => {
 
     const token = jwt.sign({ id: usuario.id, tipo: usuario.tipo }, SECRET_KEY, { expiresIn: '2h' });
 
-    // Envia os dados necessários para o frontend
+    
     res.json({
   message: 'Login realizado com sucesso!',
   token,

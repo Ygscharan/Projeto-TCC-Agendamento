@@ -22,7 +22,7 @@ function CadastrarEmpresa() {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/api/fornecedores', {
+      await axios.post('http://localhost:3000/api/fornecedores', {
         nome,
         cnpj,
         endereco,
@@ -36,7 +36,7 @@ function CadastrarEmpresa() {
       setEndereco('');
       setTelefone('');
 
-      // Redirecionar após 2 segundos (opcional)
+      
       setTimeout(() => navigate('/adicionar-usuario'), 2000);
     } catch (err) {
       console.error(err);

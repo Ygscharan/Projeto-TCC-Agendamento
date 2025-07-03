@@ -39,7 +39,6 @@ function PaginaInicialFornecedor() {
           <div className="botoes">
             <Link to="/agendar-usuario" className="botao verde">Agendar Carga</Link>
             <Link to="/meus-agendamentos" className="botao verde">Meus Agendamentos</Link>
-            <Link to="/adicionar-usuario" className="botao verde">Adicionar Usuários</Link>
           </div>
         </section>
       </main>

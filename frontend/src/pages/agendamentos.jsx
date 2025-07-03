@@ -17,11 +17,11 @@ function Agendamentos() {
       try {
         const response = await axios.get('http://localhost:3000/api/agendamentos');
         setAgendamentos(response.data);
-        // Lojas únicas
+        
         setLojas(Array.from(new Set(response.data.map(a => a.loja?.nome).filter(Boolean))));
-        // Fornecedores únicos
+        
         setFornecedores(Array.from(new Set(response.data.map(a => a.fornecedorAgendamento?.nome).filter(Boolean))));
-        // Status únicos
+        
         setStatusUnicos(Array.from(new Set(response.data.map(a => a.status).filter(Boolean))));
       } catch (err) {
         setAgendamentos([]);
@@ -30,7 +30,7 @@ function Agendamentos() {
     fetchAgendamentos();
   }, []);
 
-  // Filtragem
+
   const agendamentosFiltrados = agendamentos.filter(ag => {
     const dataOk = !filtroData || (ag.data_agendamento && ag.data_agendamento.slice(0, 10) === filtroData);
     const lojaOk = !filtroLoja || ag.loja?.nome === filtroLoja;
@@ -39,16 +39,15 @@ function Agendamentos() {
     return dataOk && lojaOk && fornecedorOk && statusOk;
   });
 
-  // Função utilitária para formatar data e hora
+
   function formatarData(dataStr) {
     if (!dataStr) return '';
-    const d = new Date(dataStr);
-    return d.toLocaleDateString('pt-BR');
+    const [ano, mes, dia] = dataStr.slice(0, 10).split('-');
+    return `${dia}/${mes}/${ano}`;
   }
   function formatarHora(dataStr) {
     if (!dataStr) return '';
-    const d = new Date(dataStr);
-    return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false });
+    return dataStr.slice(11, 16);
   }
 
   return (

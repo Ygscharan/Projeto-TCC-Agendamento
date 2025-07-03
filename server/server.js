@@ -24,7 +24,7 @@ app.use(cors({ origin: '*' }));
 
 app.use('/uploads', express.static('uploads'));
 
-// Rotas da API
+
 app.use('/api/fornecedores', fornecedorRoutes);
 app.use('/api/notas-fiscais', notaFiscalRoutes);
 app.use('/api/agendamentos', agendamentoRoutes);

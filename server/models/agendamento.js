@@ -32,19 +32,19 @@ const Agendamento = sequelize.define('agendamentos', {
         }
     },
 
-    // Novo: início do agendamento com hora
+    
     data_hora_inicio: {
         type: DataTypes.DATE,
         allowNull: false
     },
 
-    // Novo: fim do agendamento com hora
+    
     data_hora_fim: {
         type: DataTypes.DATE,
         allowNull: false
     },
 
-    // Opcional: para exibir só a data no calendário
+    
     data_agendamento: {
         type: DataTypes.DATEONLY,
         allowNull: false
@@ -61,14 +61,14 @@ const Agendamento = sequelize.define('agendamentos', {
     },
     arquivo_xml: {
   type: DataTypes.STRING,
-  allowNull: true // Pode ser nulo se o usuário ainda não subiu o arquivo
+  allowNull: true 
 }
 
 }, {
     timestamps: false
 });
 
-// Associações
+
 Agendamento.associate = (models) => {
     Agendamento.belongsTo(models.Fornecedor, {
         foreignKey: 'fornecedor_id',

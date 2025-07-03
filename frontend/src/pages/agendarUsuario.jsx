@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
-import { format, parse, startOfWeek, getDay, isBefore } from 'date-fns';
+import { format, parse, startOfWeek, getDay } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import '../paginaUsuario.css';
@@ -17,7 +17,7 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-// Toolbar personalizada para exibir mês/ano em português
+
 const CustomToolbar = (toolbar) => {
   const goToBack = () => {
     toolbar.onNavigate('PREV');
@@ -31,7 +31,7 @@ const CustomToolbar = (toolbar) => {
     toolbar.onNavigate('TODAY');
   };
 
-  // Formata o mês e ano em português
+  
   const label = format(toolbar.date, "MMMM 'de' yyyy", { locale: ptBR });
 
   return (
@@ -44,6 +44,20 @@ const CustomToolbar = (toolbar) => {
       <span className="rbc-toolbar-label">{label}</span>
     </div>
   );
+};
+
+
+const CustomWeekHeader = ({ label }) => {
+  const dias = {
+    'Sun': 'Dom',
+    'Mon': 'Seg',
+    'Tue': 'Ter',
+    'Wed': 'Qua',
+    'Thu': 'Qui',
+    'Fri': 'Sex',
+    'Sat': 'Sáb'
+  };
+  return <span>{dias[label] || label}</span>;
 };
 
 const AgendarUsuario = () => {
@@ -75,7 +89,7 @@ const AgendarUsuario = () => {
     return horarios;
   };
 
-  // Buscar lojas ao carregar a tela
+  
   useEffect(() => {
     async function fetchLojas() {
       try {
@@ -88,7 +102,7 @@ const AgendarUsuario = () => {
     fetchLojas();
   }, []);
 
-  // Buscar agendamentos da loja selecionada e mês exibido
+  
   useEffect(() => {
     if (!lojaSelecionada) return;
     async function fetchAgendamentos() {
@@ -100,22 +114,23 @@ const AgendarUsuario = () => {
         const agendadosPorData = {};
 
         agendamentos.forEach((item) => {
-          const data = (typeof item.data_agendamento === 'string')
-            ? item.data_agendamento.slice(0, 10)
-            : new Date(item.data_agendamento).toISOString().slice(0, 10);
-          const dataHora = new Date(item.data_hora_inicio);
-          const hora = dataHora.getUTCHours().toString().padStart(2, '0');
-          const minuto = dataHora.getUTCMinutes().toString().padStart(2, '0');
-          const horarioCompleto = `${hora}:${minuto}`;
+          if (item.status !== 'CANCELADO') {
+            const data = (typeof item.data_agendamento === 'string')
+              ? item.data_agendamento.slice(0, 10)
+              : new Date(item.data_agendamento).toISOString().slice(0, 10);
+            const dataHora = new Date(item.data_hora_inicio);
+            const hora = dataHora.getUTCHours().toString().padStart(2, '0');
+            const minuto = dataHora.getUTCMinutes().toString().padStart(2, '0');
+            const horarioCompleto = `${hora}:${minuto}`;
 
-          if (!agendadosPorData[data]) agendadosPorData[data] = [];
-          agendadosPorData[data].push(horarioCompleto);
+            if (!agendadosPorData[data]) agendadosPorData[data] = [];
+            agendadosPorData[data].push(horarioCompleto);
+          }
         });
 
-        // Gerar eventos para o mês exibido
+        
         const ano = dataBase.getFullYear();
         const mes = dataBase.getMonth();
-        const primeiroDia = new Date(ano, mes, 1);
         const ultimoDia = new Date(ano, mes + 1, 0);
         const diasNoMes = ultimoDia.getDate();
         const hoje = new Date();
@@ -246,6 +261,7 @@ const AgendarUsuario = () => {
             time: 'Hora',
             event: 'Evento',
             noEventsInRange: 'Não há eventos neste período.',
+            showMore: total => `+${total} mais`,
           }}
           views={['month']}
           defaultView="month"
@@ -253,6 +269,9 @@ const AgendarUsuario = () => {
           date={dataBase}
           components={{
             toolbar: CustomToolbar,
+            month: {
+              header: CustomWeekHeader
+            }
           }}
         />
       )}

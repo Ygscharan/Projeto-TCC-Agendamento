@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getAllFornecedores, createFornecedor } = require('../controllers/fornecedorController');
 
-// Listar fornecedores
+
 router.get('/', async (req, res) => {
   try {
     const fornecedores = await getAllFornecedores();
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Criar fornecedor
+
 router.post('/', async (req, res) => {
   try {
     const novoFornecedor = await createFornecedor(req.body);

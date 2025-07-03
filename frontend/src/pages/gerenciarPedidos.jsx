@@ -2,12 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../gerenciarPedidos.css';
 
-function formatHoraBrasilia(isoString) {
-  const data = new Date(isoString);
-  data.setHours(data.getHours() - 3);
-  return data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-}
-
 const GerenciarPedidos = () => {
   const [agendamentos, setAgendamentos] = useState([]);
 
@@ -46,13 +40,24 @@ const GerenciarPedidos = () => {
     const confirmar = window.confirm('Tem certeza que deseja cancelar este agendamento?');
     if (!confirmar) return;
     try {
-      await axios.delete(`http://localhost:3000/api/agendamentos/${id}`);
-      setAgendamentos(prev => prev.filter(ag => ag.id !== id));
+      await axios.put(`http://localhost:3000/api/agendamentos/${id}`, { status: 'CANCELADO' });
+      setAgendamentos(prev => prev.map(ag => ag.id === id ? { ...ag, status: 'CANCELADO' } : ag));
     } catch (error) {
       console.error('Erro ao cancelar agendamento:', error);
       alert('Erro ao cancelar agendamento.');
     }
   };
+
+  function formatarData(dataStr) {
+    if (!dataStr) return '';
+    const [ano, mes, dia] = dataStr.slice(0, 10).split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  function formatarHora(dataStr) {
+    if (!dataStr) return '';
+    return dataStr.slice(11, 16);
+  }
 
   return (
     <div className="container-gerenciar">
@@ -62,10 +67,9 @@ const GerenciarPedidos = () => {
       ) : (
         agendamentos.map(ag => (
           <div key={ag.id} className="card-agendamento">
-            <p><strong>Data:</strong> {ag.data_agendamento}</p>
+            <p><strong>Data:</strong> {formatarData(ag.data_agendamento)}</p>
             <p>
-              <strong>Horário:</strong>{' '}
-              {new Date(ag.data_hora_inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Sao_Paulo' })}
+              <strong>Horário:</strong> {formatarHora(ag.data_hora_inicio)}
             </p>
             <p><strong>Status:</strong> {ag.status?.charAt(0) + ag.status?.slice(1).toLowerCase()}</p>
             <p><strong>Loja:</strong> {ag.loja?.nome || 'N/A'}</p>

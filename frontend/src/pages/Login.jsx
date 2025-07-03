@@ -21,17 +21,17 @@ const handleLogin = async (e) => {
 
     const { token, tipo, nome, fornecedor } = response.data;
 
-    // Armazenar os dados no localStorage
+    
     localStorage.setItem('token', token);
     localStorage.setItem('nome', nome);
     localStorage.setItem('tipo', tipo);
 
     if (fornecedor) {
-      localStorage.setItem('fornecedor_id', fornecedor.id);    // <-- usa fornecedor.id
-      localStorage.setItem('fornecedor_nome', fornecedor.nome); // <-- usa fornecedor.nome
+      localStorage.setItem('fornecedor_id', fornecedor.id);    
+      localStorage.setItem('fornecedor_nome', fornecedor.nome); 
     }
 
-    // Redirecionar conforme o tipo
+    
     if (tipo === 'FORNECEDOR') {
       navigate('/pagina-inicial-fornecedor');
     } else {
@@ -72,7 +72,7 @@ const handleLogin = async (e) => {
             required
           />
           <button type="submit">Entrar</button>
-          <button type="button" onClick={() => navigate('/adicionar-usuario')}>Adicionar Usuário</button>
+          <button type="button" onClick={() => navigate('/adicionar-usuario')}>Cadastre-se</button>
           {showForgotPassword && (
             <button type="button" onClick={() => navigate('/recuperar-senha')}>Esqueci minha senha</button>
           )}

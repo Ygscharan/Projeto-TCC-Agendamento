@@ -1,6 +1,6 @@
 const NotaFiscal = require('../models/notaFiscal');
 
-// Função para listar todas as notas fiscais
+
 const getAllNotasFiscais = async () => {
     try {
         const notasFiscais = await NotaFiscal.findAll();
@@ -11,7 +11,7 @@ const getAllNotasFiscais = async () => {
     }
 };
 
-// Função para criar uma nova nota fiscal
+
 const createNotaFiscal = async (notaFiscalData) => {
     try {
         const novaNotaFiscal = await NotaFiscal.create(notaFiscalData);

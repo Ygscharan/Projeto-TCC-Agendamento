@@ -1,7 +1,6 @@
-// controllers/lojaController.js
 const Loja = require('../models/loja');
 
-// Função para listar todas as lojas
+
 const getAllLojas = async (req, res) => {
     try {
         const lojas = await Loja.findAll();
@@ -11,7 +10,7 @@ const getAllLojas = async (req, res) => {
     }
 };
 
-// Função para criar uma nova loja
+
 const createLoja = async (req, res) => {
     try {
         const { nome, endereco, telefone } = req.body;
@@ -22,7 +21,7 @@ const createLoja = async (req, res) => {
     }
 };
 
-// Função para obter uma loja específica pelo ID
+
 const getLojaById = async (req, res) => {
     try {
         const loja = await Loja.findByPk(req.params.id);
@@ -36,7 +35,7 @@ const getLojaById = async (req, res) => {
     }
 };
 
-// Função para atualizar uma loja
+
 const updateLoja = async (req, res) => {
     try {
         const { nome, endereco, telefone } = req.body;
@@ -55,7 +54,7 @@ const updateLoja = async (req, res) => {
     }
 };
 
-// Função para excluir uma loja
+
 const deleteLoja = async (req, res) => {
     try {
         const loja = await Loja.findByPk(req.params.id);

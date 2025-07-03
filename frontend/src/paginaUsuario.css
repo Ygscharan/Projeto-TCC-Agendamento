@@ -13,11 +13,11 @@
 }
 
 .secao-1, .-PIU-secao-2 {
-  background-color: #fff; /* cor de fundo branco */
+  background-color: #fff; 
   padding: 20px;
   margin: 20px;
-  border: 1px solid #ddd; /* borda cinza */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* sombra */
+  border: 1px solid #ddd; 
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
 }
 
 .subtitulo {
@@ -63,17 +63,17 @@
   cursor: not-allowed;
 }
 
-/* Estilo base para eventos do calendário */
+
 .rbc-event {
   transition: opacity 0.3s ease;
 }
 
-/* Evento do tipo 'disponível' inicialmente invisível */
+
 .event-disponivel {
   opacity: 0;
 }
 
-/* Fica visível quando passa o mouse */
+
 .event-disponivel.hovered {
   opacity: 1;
 }
@@ -83,7 +83,7 @@
   transition: box-shadow 0.2s ease;
 }
 
-/* Esconde os botões de view do calendário (Mês, Semana, Dia, Agenda) */
+
 .rbc-toolbar .rbc-btn-group:nth-child(2) {
   display: none;
 }

@@ -37,11 +37,11 @@ const Usuario = sequelize.define('Usuario', {
   timestamps: false
 });
 
-// Associação com Fornecedor — nome corrigido:
+
 Usuario.associate = (models) => {
   Usuario.belongsTo(models.Fornecedor, {
     foreignKey: 'fornecedor_id',
-    as: 'fornecedorUsuario' // <-- Nome compatível com o controller/login
+    as: 'fornecedorUsuario' 
   });
 };
 
