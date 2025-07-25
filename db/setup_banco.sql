@@ -1,4 +1,5 @@
 CREATE DATABASE agendamento_entregas;
+
 USE agendamento_entregas;
 
 CREATE TABLE fornecedores (
@@ -98,3 +99,9 @@ DELETE FROM usuarios
 
 DESCRIBE usuarios;
 SELECT * FROM agendamentos WHERE loja_id = 2;
+
+ALTER TABLE usuarios ADD COLUMN fornecedor_id INT;
+
+
+select * from 
+

@@ -1,6 +1,8 @@
+// src/pages/Login.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import '../Login.css'; 
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -9,57 +11,56 @@ function Login() {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const navigate = useNavigate();
 
-const handleLogin = async (e) => {
-  e.preventDefault();
-  setError('');
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
 
-  try {
-    const response = await axios.post('http://localhost:3000/api/auth/login', {
-      email,
-      senha,
-    });
+    try {
+      const response = await axios.post('http://localhost:3000/api/auth/login', {
+        email,
+        senha,
+      });
 
-    const { token, tipo, nome, fornecedor } = response.data;
+      const { token, tipo, nome, fornecedor } = response.data;
 
-    
-    localStorage.setItem('token', token);
-    localStorage.setItem('nome', nome);
-    localStorage.setItem('tipo', tipo);
+      localStorage.setItem('token', token);
+      localStorage.setItem('nome', nome);
+      localStorage.setItem('tipo', tipo);
 
-    if (fornecedor) {
-      localStorage.setItem('fornecedor_id', fornecedor.id);    
-      localStorage.setItem('fornecedor_nome', fornecedor.nome); 
-    }
-
-    
-    if (tipo === 'FORNECEDOR') {
-      navigate('/pagina-inicial-fornecedor');
-    } else {
-      localStorage.removeItem('fornecedor_id');
-      localStorage.removeItem('fornecedor_nome');
-      navigate('/pagina-inicial-usuario');
-    }
-  } catch (err) {
-    console.error('Erro no login:', err);
-    if (err.response?.data?.error) {
-      setError(err.response.data.error);
-      if (err.response.data.error === 'Senha incorreta') {
-        setShowForgotPassword(true);
+      if (fornecedor) {
+        localStorage.setItem('fornecedor_id', fornecedor.id);
+        localStorage.setItem('fornecedor_nome', fornecedor.nome);
       }
-    } else {
-      setError('Erro ao realizar login');
+
+      if (tipo === 'FORNECEDOR') {
+        navigate('/pagina-inicial-fornecedor');
+      } else {
+        localStorage.removeItem('fornecedor_id');
+        localStorage.removeItem('fornecedor_nome');
+        navigate('/pagina-inicial-usuario');
+      }
+    } catch (err) {
+      console.error('Erro no login:', err);
+      if (err.response?.data?.error) {
+        setError(err.response.data.error);
+        if (err.response.data.error === 'Senha incorreta') {
+          setShowForgotPassword(true);
+        }
+      } else {
+        setError('Erro ao realizar login');
+      }
     }
-  }
-};
+  };
+
   return (
-    <div className="container">
-      <div className="login-form">
-        <h2>Login</h2>
+    <div className="login-container">
+      <div className="login-box">
+        <h1 className="login-title">Sistema de Agendamentos</h1>
         {error && <div className="error">{error}</div>}
         <form onSubmit={handleLogin}>
           <input
             type="email"
-            placeholder="E-mail"
+            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -71,12 +72,19 @@ const handleLogin = async (e) => {
             onChange={(e) => setSenha(e.target.value)}
             required
           />
-          <button type="submit">Entrar</button>
-          <button type="button" onClick={() => navigate('/adicionar-usuario')}>Cadastre-se</button>
-          {showForgotPassword && (
-            <button type="button" onClick={() => navigate('/recuperar-senha')}>Esqueci minha senha</button>
-          )}
+          <button type="submit" className="btn-login">Entrar</button>
         </form>
+
+        <div className="login-links">
+          {showForgotPassword && (
+            <button className="link-button" onClick={() => navigate('/recuperar-senha')}>
+              Esqueceu a senha?
+            </button>
+          )}
+          <button className="link-button" onClick={() => navigate('/adicionar-usuario')}>
+            Criar conta
+          </button>
+        </div>
       </div>
     </div>
   );

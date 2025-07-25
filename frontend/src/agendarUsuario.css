@@ -1,29 +1,162 @@
+/* Fundo geral da página */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(145deg, #0a0a0a, #1a1a1a);
+  background-attachment: fixed;
+  min-height: 100vh;
+  color: #fff;
+}
+
+/* Container principal */
 .agendamento-container {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  .agendamento-container h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .rbc-event {
-    padding: 4px;
-    border-radius: 4px;
-    color: white;
-    border: none;
-  }
-  
-  .rbc-event.disponivel {
-    background-color: #28a745;
-  }
-  
-  .rbc-event.analise {
-    background-color: #007bff;
-  }
-  
-  .rbc-event.agendado {
-    background-color: #6c757d;
-  }
-  
+  padding: 20px;
+  background-color: #1a1a1a;
+  min-height: 100vh;
+  max-width: 900px;
+  margin: 40px auto;
+  border-radius: 16px;
+  box-shadow: 0 0 24px rgba(255, 0, 0, 0.2);
+}
+
+/* Topo */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+h2 {
+  font-size: 32px;
+  font-weight: bold;
+  color: #ff4444;
+  margin: 0;
+}
+
+.perfil-box {
+  background-color: #292929;
+  padding: 10px 16px;
+  border-radius: 8px;
+}
+
+.perfil-nome {
+  color: #f87171;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Campo de seleção da loja */
+.campo {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #ff5252;
+  font-size: 16px;
+}
+
+select {
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
+  background-color: #2d2d2d;
+  color: #fff;
+  font-size: 16px;
+  width: 300px;
+}
+
+select option {
+  background-color: #2c2c2c;
+  color: #fff;
+}
+
+/* Calendário */
+.rbc-calendar {
+  background-color: #1f1f1f;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+/* Toolbar personalizada */
+.rbc-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rbc-btn-group button {
+  background-color: #ff3333;
+  border: none;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 6px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.rbc-btn-group button:hover {
+  background-color: #e60000;
+}
+
+.rbc-toolbar-label {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff9999;
+}
+
+/* Eventos */
+.rbc-event {
+  padding: 6px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rbc-event.disponivel {
+  background-color: #22c55e;
+}
+
+.rbc-event.analise {
+  background-color: #007bff;
+}
+
+.rbc-event.agendado {
+  background-color: #71717a;
+}
+
+.rbc-event.passado {
+  background-color: #555;
+}
+
+/* Cabeçalhos dos dias */
+.rbc-header {
+  background-color: #111;
+  color: #eee;
+  padding: 6px;
+  font-weight: bold;
+  border-bottom: 1px solid #333;
+}
+
+/* Dias fora do mês */
+.rbc-off-range-bg {
+  background: #0d0d0d;
+}
+
+/* Hover */
+.rbc-day-bg:hover {
+  background-color: #2a2a2a;
+}

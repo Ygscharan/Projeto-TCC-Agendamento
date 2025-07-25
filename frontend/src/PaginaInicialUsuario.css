@@ -1,0 +1,113 @@
+/* src/pages/PaginaInicialUsuario.css */
+
+body {
+  margin: 0;
+  background-color: #0d0d0d;
+  font-family: 'Arial', sans-serif;
+  color: #fff;
+}
+
+.pagina-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #0d0d0d;
+}
+
+.pagina-header {
+  padding: 30px 20px;
+  text-align: center;
+  background: #1c1c1c;
+  border-bottom: 1px solid #333;
+}
+
+.pagina-titulo {
+  font-size: 36px;
+  color: #e50914;
+  margin-bottom: 10px;
+}
+
+.pagina-bemvindo {
+  margin-top: 10px;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.pagina-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.pagina-card {
+  background-color: #1c1c1c;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px #00000080;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.pagina-subtitulo {
+  font-size: 24px;
+  margin-bottom: 25px;
+}
+
+.pagina-botoes {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.botao {
+  padding: 14px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  text-align: center;
+}
+
+.botao.primario {
+  background-color: #e50914;
+  color: #fff;
+}
+
+.botao.primario:hover {
+  background-color: #b00610;
+  box-shadow: 0px 0px 12px #e5091480;
+}
+
+.botao.logout {
+  background-color: #444;
+  color: #fff;
+  padding: 10px 20px;
+}
+
+.botao.logout:hover {
+  background-color: #e50914;
+}
+.seta-voltar {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  cursor: pointer;
+  background-color: #333;
+  padding: 10px;
+  border-radius: 50%;
+  transition: all 0.2s ease-in-out;
+  z-index: 10;
+}
+
+.seta-voltar:hover {
+  background-color: #e50914;
+}

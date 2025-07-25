@@ -3,9 +3,9 @@ import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import '../paginaUsuario.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import '../agendarUsuario.css';
 
 const locales = { 'pt-BR': ptBR };
 
@@ -17,45 +17,28 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-
 const CustomToolbar = (toolbar) => {
-  const goToBack = () => {
-    toolbar.onNavigate('PREV');
-  };
-
-  const goToNext = () => {
-    toolbar.onNavigate('NEXT');
-  };
-
-  const goToCurrent = () => {
-    toolbar.onNavigate('TODAY');
-  };
-
-  
+  const goToBack = () => toolbar.onNavigate('PREV');
+  const goToNext = () => toolbar.onNavigate('NEXT');
+  const goToCurrent = () => toolbar.onNavigate('TODAY');
   const label = format(toolbar.date, "MMMM 'de' yyyy", { locale: ptBR });
 
   return (
     <div className="rbc-toolbar">
-      <span className="rbc-btn-group">
-        <button type="button" onClick={goToBack}>Anterior</button>
-        <button type="button" onClick={goToCurrent}>Hoje</button>
-        <button type="button" onClick={goToNext}>Próximo</button>
-      </span>
+      <div className="rbc-btn-group">
+        <button onClick={goToBack}>Anterior</button>
+        <button onClick={goToCurrent}>Hoje</button>
+        <button onClick={goToNext}>Próximo</button>
+      </div>
       <span className="rbc-toolbar-label">{label}</span>
     </div>
   );
 };
 
-
 const CustomWeekHeader = ({ label }) => {
   const dias = {
-    'Sun': 'Dom',
-    'Mon': 'Seg',
-    'Tue': 'Ter',
-    'Wed': 'Qua',
-    'Thu': 'Qui',
-    'Fri': 'Sex',
-    'Sat': 'Sáb'
+    'Sun': 'Dom', 'Mon': 'Seg', 'Tue': 'Ter', 'Wed': 'Qua',
+    'Thu': 'Qui', 'Fri': 'Sex', 'Sat': 'Sáb'
   };
   return <span>{dias[label] || label}</span>;
 };
@@ -72,24 +55,18 @@ const AgendarUsuario = () => {
 
   const gerarHorariosDisponiveis = (dataStr) => {
     const horarios = [];
-    const turnos = [
-      { inicio: 8, fim: 11 },
-      { inicio: 13, fim: 18 },
-    ];
+    const turnos = [{ inicio: 8, fim: 11 }, { inicio: 13, fim: 18 }];
 
     turnos.forEach((turno) => {
       for (let hora = turno.inicio; hora < turno.fim; hora++) {
-        const horaStr = hora.toString().padStart(2, '0');
-        const inicio = new Date(`${dataStr}T${horaStr}:00:00`);
+        const inicio = new Date(`${dataStr}T${hora.toString().padStart(2, '0')}:00:00`);
         const fim = new Date(`${dataStr}T${(hora + 1).toString().padStart(2, '0')}:00:00`);
         horarios.push({ hora, start: inicio, end: fim });
       }
     });
-
     return horarios;
   };
 
-  
   useEffect(() => {
     async function fetchLojas() {
       try {
@@ -102,22 +79,19 @@ const AgendarUsuario = () => {
     fetchLojas();
   }, []);
 
-  
   useEffect(() => {
     if (!lojaSelecionada) return;
+
     async function fetchAgendamentos() {
       try {
         const response = await axios.get(`http://localhost:3000/api/agendamentos?loja_id=${lojaSelecionada}`);
         const agendamentos = response.data;
-
         const eventosFormatados = [];
         const agendadosPorData = {};
 
         agendamentos.forEach((item) => {
           if (item.status !== 'CANCELADO') {
-            const data = (typeof item.data_agendamento === 'string')
-              ? item.data_agendamento.slice(0, 10)
-              : new Date(item.data_agendamento).toISOString().slice(0, 10);
+            const data = typeof item.data_agendamento === 'string' ? item.data_agendamento.slice(0, 10) : new Date(item.data_agendamento).toISOString().slice(0, 10);
             const dataHora = new Date(item.data_hora_inicio);
             const hora = dataHora.getUTCHours().toString().padStart(2, '0');
             const minuto = dataHora.getUTCMinutes().toString().padStart(2, '0');
@@ -128,22 +102,20 @@ const AgendarUsuario = () => {
           }
         });
 
-        
         const ano = dataBase.getFullYear();
         const mes = dataBase.getMonth();
         const ultimoDia = new Date(ano, mes + 1, 0);
         const diasNoMes = ultimoDia.getDate();
         const hoje = new Date();
         const hojeStr = format(hoje, 'yyyy-MM-dd');
+
         for (let i = 0; i < diasNoMes; i++) {
           const dataBaseDia = new Date(ano, mes, i + 1);
           const dataStr = format(dataBaseDia, 'yyyy-MM-dd');
-
           const horarios = gerarHorariosDisponiveis(dataStr);
           const horasAgendadas = agendadosPorData[dataStr] || [];
           const disponiveis = horarios.filter(({ hora, start }) => {
             const horaStr = hora.toString().padStart(2, '0') + ':00';
-            // Se for o dia de hoje, só mostra horários futuros
             if (dataStr === hojeStr) {
               const agora = new Date();
               if (start <= agora) return false;
@@ -153,30 +125,15 @@ const AgendarUsuario = () => {
 
           const start = horarios[0].start;
           const end = horarios[horarios.length - 1].end;
-          let isDiaPassado = false;
-          if (dataStr < hojeStr) {
-            isDiaPassado = true;
-          }
-          if (dataStr === hojeStr) {
-            isDiaPassado = false;
-          }
+          let isDiaPassado = dataStr < hojeStr;
 
-          const evento = {
+          eventosFormatados.push({
             id: dataStr,
-            title: isDiaPassado
-              ? 'Data passada'
-              : disponiveis.length > 0
-              ? `${disponiveis.length} horário(s) disponível(eis)`
-              : 'Agendado',
+            title: isDiaPassado ? 'Data passada' : disponiveis.length > 0 ? `${disponiveis.length} horário(s) disponível(eis)` : 'Agendado',
             start,
             end,
-            status: isDiaPassado
-              ? 'passado'
-              : disponiveis.length > 0
-              ? 'disponivel'
-              : 'agendado',
-          };
-          eventosFormatados.push(evento);
+            status: isDiaPassado ? 'passado' : disponiveis.length > 0 ? 'disponivel' : 'agendado'
+          });
         }
         setEventos(eventosFormatados);
       } catch (error) {
@@ -187,31 +144,18 @@ const AgendarUsuario = () => {
   }, [lojaSelecionada, dataBase]);
 
   const eventStyleGetter = (event) => {
-    let backgroundColor;
-
-    switch (event.status) {
-      case 'disponivel':
-        backgroundColor = '#28a745'; // Verde
-        break;
-      case 'agendado':
-        backgroundColor = '#6c757d'; // Cinza escuro
-        break;
-      case 'passado':
-        backgroundColor = '#b1b1b1'; // Cinza claro
-        break;
-      default:
-        backgroundColor = '#17a2b8'; // Padrão
-        break;
-    }
-
+    const colors = {
+      disponivel: '#22c55e',
+      agendado: '#71717a',
+      passado: '#d4d4d8'
+    };
     return {
       style: {
-        backgroundColor,
-        color: 'white',
-        borderRadius: '4px',
-        border: 'none',
-        padding: '4px',
-        cursor: event.status === 'disponivel' ? 'pointer' : 'default',
+        backgroundColor: colors[event.status] || '#38bdf8',
+        color: '#fff',
+        borderRadius: '6px',
+        padding: '6px',
+        fontWeight: '500'
       },
     };
   };
@@ -229,50 +173,49 @@ const AgendarUsuario = () => {
 
   return (
     <div className="agendamento-container">
-      <h2>Agendamento de Cargas</h2>
+      <div className="top-bar">
+        <h2>Agendamento de Cargas</h2>
+        <div className="perfil-box">
+          <span className="perfil-nome">Usuário</span>
+        </div>
+      </div>
+
       <div className="campo">
-        <label>Selecione a loja:</label>
-        <select value={lojaSelecionada} onChange={e => setLojaSelecionada(e.target.value)}>
-          <option value="">Selecione uma loja</option>
+        <label htmlFor="loja">Selecione a Loja:</label>
+        <select
+          id="loja"
+          value={lojaSelecionada}
+          onChange={e => setLojaSelecionada(e.target.value)}
+        >
+          <option value="">-- Escolha uma loja --</option>
           {lojas.map(loja => (
             <option key={loja.id} value={loja.id}>{loja.nome}</option>
           ))}
         </select>
       </div>
+
       {lojaSelecionada && (
         <Calendar
           localizer={localizer}
           events={eventos}
           startAccessor="start"
           endAccessor="end"
-          style={{ height: 500 }}
+          style={{ height: 600 }}
           selectable
           onSelectSlot={handleSelectSlot}
           eventPropGetter={eventStyleGetter}
           messages={{
-            next: 'Próximo',
-            previous: 'Anterior',
-            today: 'Hoje',
-            month: 'Mês',
-            week: 'Semana',
-            day: 'Dia',
-            agenda: 'Agenda',
-            date: 'Data',
-            time: 'Hora',
-            event: 'Evento',
+            next: 'Próximo', previous: 'Anterior', today: 'Hoje',
+            month: 'Mês', week: 'Semana', day: 'Dia', agenda: 'Agenda',
+            date: 'Data', time: 'Hora', event: 'Evento',
             noEventsInRange: 'Não há eventos neste período.',
-            showMore: total => `+${total} mais`,
+            showMore: total => `+${total} mais`
           }}
           views={['month']}
           defaultView="month"
           onNavigate={handleNavigate}
           date={dataBase}
-          components={{
-            toolbar: CustomToolbar,
-            month: {
-              header: CustomWeekHeader
-            }
-          }}
+          components={{ toolbar: CustomToolbar, month: { header: CustomWeekHeader } }}
         />
       )}
     </div>

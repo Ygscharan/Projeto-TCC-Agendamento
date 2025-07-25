@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import '../inicio.css';
+import '../PaginaInicialUsuario.css';
+import { ArrowLeft, UserCircle, LogOut, Lock } from 'lucide-react';
+
 
 function PaginaInicialUsuario() {
   const [nomeUsuario, setNomeUsuario] = useState('');
+  const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
+  const menuRef = useRef();
 
   useEffect(() => {
     const nome = localStorage.getItem('nome');
-    if (nome) {
-      setNomeUsuario(nome);
-    }
+    if (nome) setNomeUsuario(nome);
   }, []);
 
   const handleLogout = () => {
@@ -18,29 +20,74 @@ function PaginaInicialUsuario() {
     navigate('/login');
   };
 
+  const handleAlterarSenha = () => {
+    navigate('/alterar-senha');
+  };
+
+  // Fecha o menu se clicar fora
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
-    <div className="container">
-      <header className="header">
-        <h1 className="titulo">Sistema de Agendamento de Carga do Mercado</h1>
-        {nomeUsuario && (
-          <p className="bem-vindo">
-            Bem-vindo(a), <strong>{nomeUsuario}</strong>
-            <button className="botao logout" onClick={handleLogout} style={{marginLeft: 24}}>Logout</button>
-          </p>
-        )}
+    <div className="pagina-container">
+      <div style={{ padding: '20px' }} className="top-bar">
+        <button onClick={() => navigate(-1)} className="voltar-btn">
+          <ArrowLeft size={20} />
+          <span className="texto-voltar">Voltar</span>
+        </button>
+
+        {/* Botão de Perfil */}
+        <div className="perfil-wrapper" ref={menuRef}>
+          <button className="perfil-btn" onClick={() => setShowMenu(!showMenu)}>
+            <UserCircle size={28} />
+            <span>{nomeUsuario}</span>
+          </button>
+
+          {showMenu && (
+            <div className="perfil-menu">
+              <button onClick={handleAlterarSenha}>
+                <Lock size={16} /> Alterar Senha
+              </button>
+              <button onClick={handleLogout}>
+                <LogOut size={16} /> Logout
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <header className="pagina-header">
+        <h1 className="pagina-titulo">Sistema de Agendamentos</h1>
       </header>
 
-      <main className="main">
-        <section className="secao-1">
-          <h2 className="subtitulo">O que você deseja fazer?</h2>
-          <div className="botoes">
-            <Link to="/agendar-usuario" className="botao verde">Agendar Carga</Link>
-            <Link to="/gerenciar-pedidos" className="botao verde">Gerenciar Pedidos</Link>
-            <Link to="/agendamentos" className="botao verde">Todos os Agendamentos</Link>
-            <Link to="/adicionar-usuario" className="botao verde">Adicionar Usuários</Link>
-            <Link to="/adicionar-loja" className="botao verde">Adicionar Loja</Link>
+      <main className="pagina-main">
+        <div className="pagina-card">
+          <h2 className="pagina-subtitulo">O que você deseja fazer?</h2>
+          <div className="pagina-botoes">
+            <Link to="/agendar-usuario" className="botao primario">
+              Agendar Carga
+            </Link>
+            <Link to="/gerenciar-pedidos" className="botao primario">
+              Gerenciar Pedidos
+            </Link>
+            <Link to="/agendamentos" className="botao primario">
+              Todos os Agendamentos
+            </Link>
+            <Link to="/adicionar-usuario" className="botao primario">
+              Adicionar Usuários
+            </Link>
+            <Link to="/adicionar-loja" className="botao primario">
+              Adicionar Loja
+            </Link>
           </div>
-        </section>
+        </div>
       </main>
     </div>
   );
