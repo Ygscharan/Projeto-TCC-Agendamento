@@ -125,6 +125,7 @@ const AgendarUsuario2 = () => {
   };
 
   return (
+    
     <div className="agendamento-container">
       <h2>Agendar para o dia {formatarDataString(dataSelecionada)}</h2>
 
