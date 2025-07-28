@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../PaginaInicialUsuario.css';
-import { ArrowLeft, UserCircle, LogOut, Lock } from 'lucide-react';
+import { ArrowLeft, UserCircle, LogOut, Lock, ArrowRight } from 'lucide-react';
 
 
 function PaginaInicialUsuario() {
@@ -38,10 +38,16 @@ function PaginaInicialUsuario() {
   return (
     <div className="pagina-container">
       <div style={{ padding: '20px' }} className="top-bar">
-        <button onClick={() => navigate(-1)} className="voltar-btn">
-          <ArrowLeft size={20} />
-          <span className="texto-voltar">Voltar</span>
-        </button>
+        <div className="navegacao-btns">
+          <button onClick={() => navigate(-1)} className="voltar-btn">
+            <ArrowLeft size={20} />
+            <span className="texto-voltar">Voltar</span>
+          </button>
+          <button onClick={() => navigate(1)} className="avancar-btn">
+            <span className="texto-avancar">Avançar</span>
+            <ArrowRight size={20} />
+          </button>
+        </div>
 
         {/* Botão de Perfil */}
         <div className="perfil-wrapper" ref={menuRef}>

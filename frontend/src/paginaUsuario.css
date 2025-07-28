@@ -1,7 +1,18 @@
+body {
+  margin: 0;
+  background-color: #0d0d0d;
+  font-family: 'Arial', sans-serif;
+  color: #fff;
+}
+
 .titulo {
-  font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 18px;
+  color: #e50914;
+  text-align: center;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px #e5091420;
 }
 
 .main {
@@ -9,80 +20,105 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 36px 24px;
 }
 
 .secao-1, .-PIU-secao-2 {
-  background-color: #fff; 
-  padding: 20px;
+  background-color: #1c1c1c;
+  padding: 36px 24px;
   margin: 20px;
-  border: 1px solid #ddd; 
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+  border: 1.5px solid #333;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px #000000b0;
+  color: #fff;
+  transition: box-shadow 0.3s, background 0.3s;
+  animation: fadeIn 0.7s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: none; }
 }
 
 .subtitulo {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: #e50914;
+  letter-spacing: 0.5px;
 }
 
 .texto {
-  font-size: 18px;
+  font-size: 1.15rem;
   margin-bottom: 20px;
+  color: #fff;
+  font-weight: 500;
 }
 
 .botao-horario {
   margin: 8px;
-  padding: 10px 16px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
+  padding: 12px 18px;
+  background-color: #e50914;
+  border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px #e5091440;
 }
 
 .botao-horario.selecionado {
-  background-color: #007bff;
+  background-color: #22c55e;
   color: white;
-  border-color: #007bff;
+  border-color: #22c55e;
 }
 
 .botao-confirmar {
   margin-top: 20px;
-  padding: 12px 20px;
-  font-size: 16px;
-  background-color: #28a745;
+  padding: 15px 22px;
+  font-size: 18px;
+  background-color: #e50914;
   border: none;
   color: white;
   border-radius: 8px;
   cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px #e5091440;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 
 .botao-confirmar:disabled {
-  background-color: #ccc;
+  background-color: #333;
   cursor: not-allowed;
 }
 
-
-.rbc-event {
-  transition: opacity 0.3s ease;
+.botao-confirmar:hover:not(:disabled),
+.botao-horario:hover:not(:disabled) {
+  background-color: #b00610;
+  box-shadow: 0 4px 16px #e5091480;
+  transform: translateY(-2px) scale(1.03);
 }
 
+.rbc-event {
+  transition: opacity 0.3s ease, box-shadow 0.2s;
+}
 
 .event-disponivel {
   opacity: 0;
 }
-
 
 .event-disponivel.hovered {
   opacity: 1;
 }
 
 .rbc-event:hover {
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 12px #e5091440;
   transition: box-shadow 0.2s ease;
 }
-
 
 .rbc-toolbar .rbc-btn-group:nth-child(2) {
   display: none;

@@ -1,55 +1,96 @@
+body {
+  margin: 0;
+  background-color: #0d0d0d;
+  font-family: 'Arial', sans-serif;
+  color: #fff;
+}
+
 .container-gerenciar {
   max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
+  margin: 40px auto;
+  padding: 36px 24px;
+  background: #1c1c1c;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px #000000b0;
+  transition: box-shadow 0.3s, background 0.3s;
 }
 
 .card-agendamento {
-  border: 1px solid #ccc;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  background-color: #f9f9f9;
+  border: 1.5px solid #333;
+  padding: 28px 24px;
+  margin-bottom: 22px;
+  border-radius: 12px;
+  background-color: #232323;
+  box-shadow: 0 2px 12px #00000060;
+  transition: box-shadow 0.25s, transform 0.2s;
+  cursor: pointer;
+}
+
+.card-agendamento:hover {
+  box-shadow: 0 10px 32px #e5091440, 0 2px 12px #00000080;
+  transform: translateY(-4px) scale(1.015);
+  background: #232323ee;
 }
 
 .card-agendamento p {
   margin: 5px 0;
+  color: #fff;
+  font-size: 1.08rem;
+  font-weight: 500;
 }
 
 .card-agendamento a {
-  color: blue;
+  color: #e50914;
   text-decoration: underline;
   display: inline-block;
   margin-bottom: 10px;
+  transition: color 0.2s;
+  font-weight: 600;
+}
+
+.card-agendamento a:hover {
+  color: #fff;
 }
 
 .botoes {
   display: flex;
-  gap: 10px;
+  gap: 14px;
 }
 
 .botao-confirmar {
-  padding: 8px 12px;
-  background-color: #4caf50;
+  padding: 12px 20px;
+  background-color: #e50914;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px #e5091440;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 
 .botao-confirmar:hover {
-  background-color: #45a049;
+  background-color: #b00610;
+  box-shadow: 0 4px 16px #e5091480;
+  transform: translateY(-2px) scale(1.03);
 }
 
 .botao-cancelar {
-  padding: 8px 12px;
-  background-color: #f44336;
+  padding: 12px 20px;
+  background-color: #444;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px #00000040;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 
 .botao-cancelar:hover {
-  background-color: #e53935;
+  background-color: #e50914;
+  box-shadow: 0 4px 16px #e5091480;
+  transform: translateY(-2px) scale(1.03);
 }

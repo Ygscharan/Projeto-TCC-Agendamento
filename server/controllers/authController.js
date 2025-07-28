@@ -73,3 +73,27 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: 'Erro ao realizar login' });
   }
 };
+
+exports.alterarSenha = async (req, res) => {
+  try {
+    const { email, senhaAtual, novaSenha } = req.body;
+    if (!email || !senhaAtual || !novaSenha) {
+      return res.status(400).json({ error: 'Preencha todos os campos.' });
+    }
+    const usuario = await Usuario.findOne({ where: { email } });
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+    const senhaValida = await bcrypt.compare(senhaAtual, usuario.senha);
+    if (!senhaValida) {
+      return res.status(400).json({ error: 'Senha atual incorreta.' });
+    }
+    const novaSenhaHash = await bcrypt.hash(novaSenha, 10);
+    usuario.senha = novaSenhaHash;
+    await usuario.save();
+    res.json({ message: 'Senha alterada com sucesso!' });
+  } catch (error) {
+    console.error('Erro ao alterar senha:', error);
+    res.status(500).json({ error: 'Erro ao alterar senha.' });
+  }
+};

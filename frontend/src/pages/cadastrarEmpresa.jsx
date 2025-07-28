@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../adicionarUsuario.css';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 function CadastrarEmpresa() {
   const [nome, setNome] = useState('');
@@ -46,31 +47,43 @@ function CadastrarEmpresa() {
   };
 
   return (
-    <div className="container">
-      <header className="header">
-        <h1 className="titulo">Cadastrar Empresa</h1>
+    <div className="ad-usuario-container">
+      <div className="top-bar">
+        <div className="navegacao-btns">
+          <button onClick={() => navigate(-1)} className="voltar-btn">
+            <ArrowLeft size={20} />
+            <span className="texto-voltar">Voltar</span>
+          </button>
+          <button onClick={() => navigate(1)} className="avancar-btn">
+            <span className="texto-avancar">Avançar</span>
+            <ArrowRight size={20} />
+          </button>
+        </div>
+      </div>
+      <header className="ad-usuario-header">
+        <h1 className="ad-usuario-titulo">Cadastrar Empresa</h1>
       </header>
-      <main className="main">
+      <main className="ad-usuario-main">
         <form onSubmit={handleSubmit}>
-          <div className="campo">
-            <label>Nome da empresa:</label>
-            <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} />
+          <div className="ad-usuario-campo">
+            <label className="ad-usuario-label">Nome da empresa:</label>
+            <input className="ad-usuario-input" type="text" value={nome} onChange={(e) => setNome(e.target.value)} />
           </div>
-          <div className="campo">
-            <label>CNPJ:</label>
-            <input type="text" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
+          <div className="ad-usuario-campo">
+            <label className="ad-usuario-label">CNPJ:</label>
+            <input className="ad-usuario-input" type="text" value={cnpj} onChange={(e) => setCnpj(e.target.value)} />
           </div>
-          <div className="campo">
-            <label>Endereço:</label>
-            <input type="text" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+          <div className="ad-usuario-campo">
+            <label className="ad-usuario-label">Endereço:</label>
+            <input className="ad-usuario-input" type="text" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
           </div>
-          <div className="campo">
-            <label>Telefone:</label>
-            <input type="text" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+          <div className="ad-usuario-campo">
+            <label className="ad-usuario-label">Telefone:</label>
+            <input className="ad-usuario-input" type="text" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
           </div>
-          <button type="submit" className="botao">Cadastrar</button>
-          {error && <div className="error">{error}</div>}
-          {success && <div className="success">{success}</div>}
+          <button type="submit" className="ad-usuario-botao">Cadastrar</button>
+          {error && <div className="ad-usuario-error">{error}</div>}
+          {success && <div className="ad-usuario-success">{success}</div>}
         </form>
       </main>
     </div>

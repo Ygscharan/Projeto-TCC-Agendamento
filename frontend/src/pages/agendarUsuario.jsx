@@ -6,6 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../agendarUsuario.css';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const locales = { 'pt-BR': ptBR };
 
@@ -174,9 +175,15 @@ const AgendarUsuario = () => {
   return (
     <div className="agendamento-container">
       <div className="top-bar">
-        <h2>Agendamento de Cargas</h2>
-        <div className="perfil-box">
-          <span className="perfil-nome">Usuário</span>
+        <div className="navegacao-btns">
+          <button onClick={() => navigate(-1)} className="voltar-btn">
+            <ArrowLeft size={20} />
+            <span className="texto-voltar">Voltar</span>
+          </button>
+          <button onClick={() => navigate(1)} className="avancar-btn">
+            <span className="texto-avancar">Avançar</span>
+            <ArrowRight size={20} />
+          </button>
         </div>
       </div>
 

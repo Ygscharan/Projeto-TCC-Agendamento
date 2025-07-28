@@ -11,6 +11,7 @@ import CadastrarEmpresa from './pages/cadastrarEmpresa';
 import MeusAgendamentos from './pages/meusAgendamentos';
 import AdicionarLoja from './pages/adicionarLoja';
 import Agendamentos from './pages/agendamentos';
+import AlterarSenha from './pages/alterar-senha';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/meus-agendamentos" element={<MeusAgendamentos />} />
         <Route path="/adicionar-loja" element={<AdicionarLoja />} />
         <Route path="/agendamentos" element={<Agendamentos />} />
+        <Route path="/alterar-senha" element={<AlterarSenha />} />
       </Routes>
     </BrowserRouter>
   );

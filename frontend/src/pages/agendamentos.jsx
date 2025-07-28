@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../meusAgendamentos.css';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 function Agendamentos() {
   const [agendamentos, setAgendamentos] = useState([]);
@@ -52,6 +53,18 @@ function Agendamentos() {
 
   return (
     <div className="meus-agendamentos-container">
+      <div className="top-bar">
+        <div className="navegacao-btns">
+          <button onClick={() => window.history.back()} className="voltar-btn">
+            <ArrowLeft size={20} />
+            <span className="texto-voltar">Voltar</span>
+          </button>
+          <button onClick={() => window.history.forward()} className="avancar-btn">
+            <span className="texto-avancar">Avançar</span>
+            <ArrowRight size={20} />
+          </button>
+        </div>
+      </div>
       <h2 className="titulo-agendamentos">Todos os Agendamentos</h2>
       <div className="filtros-agendamentos">
         <input

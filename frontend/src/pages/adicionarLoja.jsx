@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Api from '../services/Api';
 import { useNavigate } from 'react-router-dom';
 import '../adicionarUsuario.css';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 function AdicionarLoja() {
   const [nome, setNome] = useState('');
@@ -39,27 +40,39 @@ function AdicionarLoja() {
   };
 
   return (
-    <div className="container">
-      <header className="header">
-        <h1 className="titulo">Adicionar Loja</h1>
+    <div className="ad-usuario-container">
+      <div className="top-bar">
+        <div className="navegacao-btns">
+          <button onClick={() => navigate(-1)} className="voltar-btn">
+            <ArrowLeft size={20} />
+            <span className="texto-voltar">Voltar</span>
+          </button>
+          <button onClick={() => navigate(1)} className="avancar-btn">
+            <span className="texto-avancar">Avançar</span>
+            <ArrowRight size={20} />
+          </button>
+        </div>
+      </div>
+      <header className="ad-usuario-header">
+        <h1 className="ad-usuario-titulo">Adicionar Loja</h1>
       </header>
-      <main className="main">
+      <main className="ad-usuario-main">
         <form onSubmit={handleSubmit}>
-          <div className="campo">
-            <label>Nome da loja:</label>
-            <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} />
+          <div className="ad-usuario-campo">
+            <label className="ad-usuario-label">Nome da loja:</label>
+            <input className="ad-usuario-input" type="text" value={nome} onChange={(e) => setNome(e.target.value)} />
           </div>
-          <div className="campo">
-            <label>Endereço:</label>
-            <input type="text" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+          <div className="ad-usuario-campo">
+            <label className="ad-usuario-label">Endereço:</label>
+            <input className="ad-usuario-input" type="text" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
           </div>
-          <div className="campo">
-            <label>Telefone:</label>
-            <input type="text" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+          <div className="ad-usuario-campo">
+            <label className="ad-usuario-label">Telefone:</label>
+            <input className="ad-usuario-input" type="text" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
           </div>
-          <button type="submit" className="botao">Cadastrar</button>
-          {error && <div className="error">{error}</div>}
-          {success && <div className="success">{success}</div>}
+          <button type="submit" className="ad-usuario-botao">Cadastrar</button>
+          {error && <div className="ad-usuario-error">{error}</div>}
+          {success && <div className="ad-usuario-success">{success}</div>}
         </form>
       </main>
     </div>

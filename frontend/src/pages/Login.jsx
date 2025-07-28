@@ -26,6 +26,7 @@ function Login() {
       localStorage.setItem('token', token);
       localStorage.setItem('nome', nome);
       localStorage.setItem('tipo', tipo);
+      localStorage.setItem('email', email);
 
       if (fornecedor) {
         localStorage.setItem('fornecedor_id', fornecedor.id);

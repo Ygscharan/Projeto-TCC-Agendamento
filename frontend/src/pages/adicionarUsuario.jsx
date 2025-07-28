@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../adicionarUsuario.css';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 function AdicionarUsuario() {
   const [nome, setNome] = useState('');
@@ -53,58 +54,65 @@ function AdicionarUsuario() {
   };
 
   return (
-    <div className="container">
-      <header className="header">
-        <h1 className="titulo">Adicionar Usuário</h1>
+    <div className="ad-usuario-container">
+      <div className="top-bar">
+        <div className="navegacao-btns">
+          <button onClick={() => navigate(-1)} className="voltar-btn">
+            <ArrowLeft size={20} />
+            <span className="texto-voltar">Voltar</span>
+          </button>
+          <button onClick={() => navigate(1)} className="avancar-btn">
+            <span className="texto-avancar">Avançar</span>
+            <ArrowRight size={20} />
+          </button>
+        </div>
+      </div>
+      <header className="ad-usuario-header">
+        <h1 className="ad-usuario-titulo">Adicionar Usuário</h1>
       </header>
-      <main className="main">
-        <section className="secao-1">
+      <main className="ad-usuario-main">
+        <section className="ad-usuario-secao-1">
           <form onSubmit={handleSubmit}>
             {/* Tipo vem primeiro */}
-            <div className="campo">
-              <label>Tipo:</label>
-              <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
+            <div className="ad-usuario-campo">
+              <label className="ad-usuario-label">Tipo:</label>
+              <select className="ad-usuario-select" value={tipo} onChange={(e) => setTipo(e.target.value)}>
                 <option value="">Selecione o tipo de usuário</option>
                 <option value="FUNCIONARIO">Funcionário</option>
                 <option value="FORNECEDOR">Fornecedor</option>
               </select>
             </div>
-
-            {/* Campos exibidos somente após seleção do tipo */}
             {tipo && (
               <>
-                <div className="campo">
-                  <label>Nome:</label>
-                  <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} />
+                <div className="ad-usuario-campo">
+                  <label className="ad-usuario-label">Nome:</label>
+                  <input className="ad-usuario-input" type="text" value={nome} onChange={(e) => setNome(e.target.value)} />
                 </div>
-                <div className="campo">
-                  <label>E-mail:</label>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <div className="ad-usuario-campo">
+                  <label className="ad-usuario-label">E-mail:</label>
+                  <input className="ad-usuario-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
-                <div className="campo">
-                  <label>Senha:</label>
-                  <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
+                <div className="ad-usuario-campo">
+                  <label className="ad-usuario-label">Senha:</label>
+                  <input className="ad-usuario-input" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
                 </div>
               </>
             )}
-
-            {/* Campos adicionais para FORNECEDOR */}
             {tipo === 'FORNECEDOR' && (
               <>
-                <div className="campo">
-                  <label>Empresa:</label>
-                  <select value={fornecedorId} onChange={(e) => setFornecedorId(e.target.value)}>
+                <div className="ad-usuario-campo">
+                  <label className="ad-usuario-label">Empresa:</label>
+                  <select className="ad-usuario-select" value={fornecedorId} onChange={(e) => setFornecedorId(e.target.value)}>
                     <option value="">Selecione a empresa</option>
                     {fornecedores.map(f => (
                       <option key={f.id} value={f.id}>{f.nome}</option>
                     ))}
                   </select>
                 </div>
-
-                <div className="campo">
+                <div className="ad-usuario-campo">
                   <button
                     type="button"
-                    className="botao"
+                    className="ad-usuario-botao"
                     onClick={() => navigate('/cadastrar-empresa')}
                   >
                     Cadastrar Empresa
@@ -112,13 +120,10 @@ function AdicionarUsuario() {
                 </div>
               </>
             )}
-
-            {/* Botão de enviar aparece após seleção do tipo */}
             {tipo && (
-              <button type="submit" className="botao">Cadastrar</button>
+              <button type="submit" className="ad-usuario-botao">Cadastrar</button>
             )}
-
-            {error && <div className="error">{error}</div>}
+            {error && <div className="ad-usuario-error">{error}</div>}
           </form>
         </section>
       </main>
